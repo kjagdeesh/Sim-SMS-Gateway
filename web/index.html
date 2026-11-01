@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f7f9">
+  <title>SIM Relay — SMS API Playground</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="SIM Relay home">
+        <span class="brand-mark" aria-hidden="true">S</span>
+        <span>SIM Relay</span>
+      </a>
+      <span class="local-badge"><span class="dot"></span> SELF-HOSTED</span>
+    </header>
+
+    <section class="intro">
+      <p class="eyebrow">SMS API PLAYGROUND</p>
+      <h1>Send from your<br><span>own SIM.</span></h1>
+      <p class="intro-copy">Connect to your Android gateway and try a real SMS request. Your message goes through the SIM and carrier plan in that phone.</p>
+    </section>
+
+    <section class="panel connection-panel" aria-labelledby="connection-heading">
+      <div class="section-heading">
+        <div>
+          <p class="step">01 / CONNECT</p>
+          <h2 id="connection-heading">Gateway details</h2>
+        </div>
+        <button id="check-connection" class="button button-secondary" type="button">Check connection</button>
+      </div>
+      <div class="field-grid">
+        <label class="field">
+          <span>Server URL</span>
+          <input id="server-url" type="url" inputmode="url" autocomplete="url" placeholder="http://192.168.1.25:8765" required>
+          <small>Use localhost on the phone, or its Wi-Fi IP from another device.</small>
+        </label>
+        <label class="field">
+          <span>Bearer API key</span>
+          <input id="api-key" type="password" autocomplete="off" placeholder="Paste the key shown in the Android app" required>
+          <small>The key stays in this browser session and is not saved.</small>
+        </label>
+      </div>
+      <p id="connection-status" class="inline-status" role="status" aria-live="polite">Enter the address and key shown by your Android gateway.</p>
+    </section>
+
+    <section class="panel compose-panel" aria-labelledby="compose-heading">
+      <div class="section-heading">
+        <div>
+          <p class="step">02 / COMPOSE</p>
+          <h2 id="compose-heading">Try an SMS request</h2>
+        </div>
+        <span class="method">POST</span>
+      </div>
+      <form id="sms-form">
+        <label class="field">
+          <span>Destination number</span>
+          <input id="destination" type="tel" inputmode="tel" autocomplete="tel" placeholder="+14155550123" pattern="^\+[1-9]\d{7,14}$" required>
+          <small>Enter an international number in E.164 format, including + and country code.</small>
+        </label>
+        <label class="field">
+          <span>Message</span>
+          <textarea id="message" rows="5" maxlength="1600" placeholder="Write your message..." required></textarea>
+          <span class="field-footer"><small>Messages are sent by the Android device's default SIM.</small><small id="character-count">0 / 1600</small></span>
+        </label>
+        <button id="send-button" class="button button-primary" type="submit">
+          <span>Send SMS</span>
+          <span aria-hidden="true">↗</span>
+        </button>
+      </form>
+      <p class="notice"><strong>Carrier charges may apply.</strong> A successful response means Android accepted the request; it does not confirm delivery.</p>
+    </section>
+
+    <section class="panel response-panel" aria-labelledby="response-heading">
+      <div class="section-heading">
+        <div>
+          <p class="step">03 / RESPONSE</p>
+          <h2 id="response-heading">API response</h2>
+        </div>
+        <span id="response-code" class="response-code">—</span>
+      </div>
+      <pre id="response-body" class="response-body" aria-live="polite">Your result will appear here.</pre>
+    </section>
+
+    <footer>
+      <span>Messages stay on your device and carrier network.</span>
+      <span>Never expose the gateway port to the public internet.</span>
+    </footer>
+  </main>
+</body>
+</html>
