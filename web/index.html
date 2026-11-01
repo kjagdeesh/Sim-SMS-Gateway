@@ -330,13 +330,13 @@
                         <div class="field">
                             <label for="country">Default country</label>
                             <select id="country" class="select"></select>
-                            <small>Numbers typed without a <code>+</code> use this country code.</small>
+                            <small>Defaults to India. Numbers typed without a <code>+</code> use the selected country's code.</small>
                         </div>
 
                         <div id="single-fields" class="field">
                             <label for="destination">Phone number</label>
                             <div class="phone-input">
-                                <span id="dial-prefix" class="dial-prefix" aria-hidden="true">+91</span>
+                                <span id="dial-prefix" class="dial-prefix" role="img" aria-label="India flag" title="India">🇮🇳</span>
                                 <input id="destination" type="tel" inputmode="tel" autocomplete="off"
                                     placeholder="98765 43210">
                             </div>
