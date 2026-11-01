@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SimSmsGateway.DashboardPage"
+             Title="Dashboard">
+    <ScrollView>
+        <VerticalStackLayout Padding="20,28,20,28" Spacing="18">
+
+            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="14">
+                <Image Source="simsmsgatewaylogo.svg" WidthRequest="48" HeightRequest="48" VerticalOptions="Center" />
+                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="1">
+                    <Label StyleClass="Title" FontSize="23" Text="Dashboard" />
+                    <Label StyleClass="Muted" Text="Sim SMS Gateway" />
+                </VerticalStackLayout>
+                <Border Grid.Column="2" x:Name="StatusPill" VerticalOptions="Center" Padding="12,7"
+                        StrokeThickness="0" StrokeShape="RoundRectangle 20" BackgroundColor="#22808080">
+                    <Label x:Name="StatusPillLabel" Text="OFFLINE" FontFamily="OpenSansSemibold" FontSize="11"
+                           CharacterSpacing="0.8" />
+                </Border>
+            </Grid>
+
+            <Border StyleClass="Hero">
+                <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,*,*" RowSpacing="16" ColumnSpacing="8">
+                    <Label Grid.ColumnSpan="3" Text="MESSAGE OVERVIEW" FontFamily="OpenSansSemibold" FontSize="11"
+                           CharacterSpacing="1.4" TextColor="#5EEAD4" />
+                    <VerticalStackLayout Grid.Row="1" Spacing="2">
+                        <Label x:Name="TotalLabel" Text="0" FontFamily="OpenSansSemibold" FontSize="30" TextColor="White" />
+                        <Label Text="Total" FontSize="12" TextColor="#A9C1C8" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Row="1" Grid.Column="1" Spacing="2">
+                        <Label x:Name="SuccessLabel" Text="0" FontFamily="OpenSansSemibold" FontSize="30" TextColor="#4ADE80" />
+                        <Label Text="Successful" FontSize="12" TextColor="#A9C1C8" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Row="1" Grid.Column="2" Spacing="2">
+                        <Label x:Name="FailedLabel" Text="0" FontFamily="OpenSansSemibold" FontSize="30" TextColor="#F87171" />
+                        <Label Text="Failed" FontSize="12" TextColor="#A9C1C8" />
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+
+            <Label StyleClass="Heading" Text="Quick access" />
+
+            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="12" RowSpacing="12">
+                <Border StyleClass="Card">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnTileTapped" CommandParameter="server" />
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="12">
+                        <Border StyleClass="IconBox"><Label StyleClass="Icon" Text="&#xf233;" /></Border>
+                        <VerticalStackLayout Spacing="2">
+                            <Label StyleClass="Heading" FontSize="16" Text="Server" />
+                            <Label StyleClass="Muted" Text="Start, stop and share your API key" />
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Grid.Column="1" StyleClass="Card">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnTileTapped" CommandParameter="history" />
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="12">
+                        <Border StyleClass="IconBox"><Label StyleClass="Icon" Text="&#xf1da;" /></Border>
+                        <VerticalStackLayout Spacing="2">
+                            <Label StyleClass="Heading" FontSize="16" Text="Message history" />
+                            <Label StyleClass="Muted" Text="Every send with its status" />
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Grid.Row="1" StyleClass="Card">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnTileTapped" CommandParameter="api" />
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="12">
+                        <Border StyleClass="IconBox"><Label StyleClass="Icon" Text="&#xf1c9;" /></Border>
+                        <VerticalStackLayout Spacing="2">
+                            <Label StyleClass="Heading" FontSize="16" Text="API documentation" />
+                            <Label StyleClass="Muted" Text="Endpoints and examples" />
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Grid.Row="1" Grid.Column="1" StyleClass="Card">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnTileTapped" CommandParameter="settings" />
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="12">
+                        <Border StyleClass="IconBox"><Label StyleClass="Icon" Text="&#xf013;" /></Border>
+                        <VerticalStackLayout Spacing="2">
+                            <Label StyleClass="Heading" FontSize="16" Text="Settings" />
+                            <Label StyleClass="Muted" Text="Theme and app preferences" />
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Grid.Row="2" Grid.ColumnSpan="2" StyleClass="Card">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnTileTapped" CommandParameter="about" />
+                    </Border.GestureRecognizers>
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="14">
+                        <Border StyleClass="IconBox"><Label StyleClass="Icon" Text="&#xf05a;" /></Border>
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                            <Label StyleClass="Heading" FontSize="16" Text="About app" />
+                            <Label StyleClass="Muted" Text="Project description from GitHub" />
+                        </VerticalStackLayout>
+                        <Label Grid.Column="2" StyleClass="Chevron" />
+                    </Grid>
+                </Border>
+            </Grid>
+
+            <Border StyleClass="Warn">
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                    <Label FontFamily="FASolid" FontSize="16" Text="&#xf071;" TextColor="#B7791F" VerticalOptions="Start" />
+                    <Label Grid.Column="1" StyleClass="WarnText"
+                           Text="The gateway uses plain HTTP. Keep it on a trusted network and never expose its port publicly. Carrier charges may apply to every SMS." />
+                </Grid>
+            </Border>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

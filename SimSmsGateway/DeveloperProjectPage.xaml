@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SimSmsGateway.DeveloperProjectPage"
+             Title="Developer &amp; Project">
+    <ScrollView>
+        <VerticalStackLayout Padding="20,28,20,28" Spacing="18">
+
+            <Border StyleClass="Hero">
+                <VerticalStackLayout Spacing="14">
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="16">
+                        <Border WidthRequest="84" HeightRequest="84" StrokeThickness="3" Stroke="#4D5EEAD4"
+                                StrokeShape="RoundRectangle 42" Padding="0" BackgroundColor="#143733">
+                            <Grid>
+                                <Label FontFamily="FASolid" FontSize="30" Text="&#xe073;" TextColor="#5EEAD4"
+                                       HorizontalOptions="Center" VerticalOptions="Center" />
+                                <Image x:Name="AvatarImage" Aspect="AspectFill" />
+                            </Grid>
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="3">
+                            <Label Text="DEVELOPER &amp; MAINTAINER" FontFamily="OpenSansSemibold" FontSize="10" CharacterSpacing="1.4" TextColor="#5EEAD4" />
+                            <Label x:Name="NameLabel" Text="Jagdeesh" FontFamily="OpenSansSemibold" FontSize="24" TextColor="White" />
+                            <Label x:Name="MetaLabel" Text="Developer · GitHub @kjagdeesh" FontSize="12" TextColor="#A9C1C8" />
+                        </VerticalStackLayout>
+                    </Grid>
+                    <Label x:Name="BioLabel" IsVisible="False" FontSize="13" TextColor="#C7DADD" LineHeight="1.3" />
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <Button StyleClass="Ghost" Text="GitHub" Clicked="OnOpenLinkClicked" CommandParameter="https://github.com/kjagdeesh" />
+                        <Button Grid.Column="1" StyleClass="Ghost" Text="LinkedIn" Clicked="OnOpenLinkClicked"
+                                CommandParameter="https://www.linkedin.com/in/kammarijagdeesh" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <Border StyleClass="Card">
+                <VerticalStackLayout Spacing="14">
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                        <Image Source="simsmsgatewaylogo.svg" WidthRequest="46" HeightRequest="46" />
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="1">
+                            <Label StyleClass="Heading" Text="Sim SMS Gateway" />
+                            <Label StyleClass="Muted" Text=".NET MAUI · Android · SQLite · REST API" />
+                        </VerticalStackLayout>
+                    </Grid>
+                    <Label StyleClass="Body" Text="Open-source Android SMS gateway powered by your SIM, with single and bulk messaging, a REST API and a message dashboard." />
+                    <Button StyleClass="Primary" Text="Download latest Android release" Clicked="OnOpenLinkClicked"
+                            CommandParameter="https://github.com/kjagdeesh/Sim-SMS-Gateway/releases/latest" />
+                    <Button StyleClass="Secondary" Text="View project repository" Clicked="OnOpenLinkClicked"
+                            CommandParameter="https://github.com/kjagdeesh/Sim-SMS-Gateway" />
+                    <Label StyleClass="Muted" Text="Only install APKs published by the official project." />
+                </VerticalStackLayout>
+            </Border>
+
+            <Label StyleClass="Heading" Text="Pinned projects" />
+
+            <VerticalStackLayout Spacing="12">
+                <Border StyleClass="Card" Padding="16">
+                    <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnProjectTapped" CommandParameter="https://github.com/kjagdeesh/TasklyDev" /></Border.GestureRecognizers>
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="14">
+                        <Border StyleClass="IconBox"><Label StyleClass="Icon" Text="&#xf121;" /></Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                            <Label StyleClass="Heading" FontSize="15" Text="TasklyDev" />
+                            <Label StyleClass="Muted" Text="Windows developer toolkit — diagnostics, JWT, hashing and regex tools." />
+                        </VerticalStackLayout>
+                        <Label Grid.Column="2" StyleClass="Chevron" />
+                    </Grid>
+                </Border>
+                <Border StyleClass="Card" Padding="16">
+                    <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnProjectTapped" CommandParameter="https://github.com/kjagdeesh/JStitch" /></Border.GestureRecognizers>
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="14">
+                        <Border StyleClass="IconBox"><Label StyleClass="Icon" Text="&#xf1c9;" /></Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                            <Label StyleClass="Heading" FontSize="15" Text="JStitch" />
+                            <Label StyleClass="Muted" Text="Visualize, explore and convert JSON into trees, tables and C# models." />
+                        </VerticalStackLayout>
+                        <Label Grid.Column="2" StyleClass="Chevron" />
+                    </Grid>
+                </Border>
+                <Border StyleClass="Card" Padding="16">
+                    <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnProjectTapped" CommandParameter="https://github.com/kjagdeesh/PrivacyLens" /></Border.GestureRecognizers>
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="14">
+                        <Border StyleClass="IconBox"><Label StyleClass="Icon" Text="&#xf3ed;" /></Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                            <Label StyleClass="Heading" FontSize="15" Text="PrivacyLens" />
+                            <Label StyleClass="Muted" Text="On-device Android privacy dashboard for sensitive app permissions." />
+                        </VerticalStackLayout>
+                        <Label Grid.Column="2" StyleClass="Chevron" />
+                    </Grid>
+                </Border>
+                <Border StyleClass="Card" Padding="16">
+                    <Border.GestureRecognizers><TapGestureRecognizer Tapped="OnProjectTapped" CommandParameter="https://github.com/kjagdeesh/AIPneumoScan" /></Border.GestureRecognizers>
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="14">
+                        <Border StyleClass="IconBox"><Label StyleClass="Icon" Text="&#xf3cd;" /></Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                            <Label StyleClass="Heading" FontSize="15" Text="AIPneumoScan" />
+                            <Label StyleClass="Muted" Text="Offline chest X-ray analysis with an ONNX model on Android and iOS." />
+                        </VerticalStackLayout>
+                        <Label Grid.Column="2" StyleClass="Chevron" />
+                    </Grid>
+                </Border>
+            </VerticalStackLayout>
+
+            <Button StyleClass="Secondary" Text="View all repositories" Clicked="OnOpenLinkClicked"
+                    CommandParameter="https://github.com/kjagdeesh?tab=repositories" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

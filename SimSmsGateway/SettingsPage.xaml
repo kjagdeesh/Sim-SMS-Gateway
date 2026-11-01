@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SimSmsGateway.SettingsPage"
+             Shell.NavBarIsVisible="True"
+             Title="Settings">
+    <ScrollView>
+        <VerticalStackLayout Padding="20,20,20,28" Spacing="16">
+
+            <Border StyleClass="Card">
+                <VerticalStackLayout Spacing="14">
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                        <Border StyleClass="IconBox"><Label StyleClass="Icon" Text="&#xf53f;" /></Border>
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="1">
+                            <Label StyleClass="Heading" Text="Appearance" />
+                            <Label StyleClass="Muted" Text="Choose how Sim SMS Gateway looks." />
+                        </VerticalStackLayout>
+                    </Grid>
+
+                    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
+                        <Button x:Name="SystemButton" Text="System" Clicked="OnThemeClicked" CommandParameter="system" />
+                        <Button x:Name="LightButton" Grid.Column="1" Text="Light" Clicked="OnThemeClicked" CommandParameter="light" />
+                        <Button x:Name="DarkButton" Grid.Column="2" Text="Dark" Clicked="OnThemeClicked" CommandParameter="dark" />
+                    </Grid>
+                    <Label x:Name="ThemeHint" StyleClass="Muted" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border StyleClass="Card">
+                <VerticalStackLayout Spacing="14">
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                        <Border StyleClass="IconBox"><Label StyleClass="Icon" Text="&#xf233;" /></Border>
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="1">
+                            <Label StyleClass="Heading" Text="Gateway" />
+                            <Label StyleClass="Muted" Text="Details about this installation." />
+                        </VerticalStackLayout>
+                    </Grid>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label StyleClass="Body" Text="App version" />
+                        <Label x:Name="VersionLabel" Grid.Column="1" StyleClass="Accent" />
+                    </Grid>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label StyleClass="Body" Text="Server port" />
+                        <Label x:Name="PortLabel" Grid.Column="1" StyleClass="Accent" />
+                    </Grid>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label StyleClass="Body" Text="Stored messages" />
+                        <Label x:Name="StoredLabel" Grid.Column="1" StyleClass="Accent" />
+                    </Grid>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label StyleClass="Body" Text="Server status" />
+                        <Label x:Name="ServerLabel" Grid.Column="1" StyleClass="Accent" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <Border StyleClass="Card">
+                <VerticalStackLayout Spacing="10">
+                    <Label StyleClass="Heading" Text="Privacy" />
+                    <Label StyleClass="Body" Text="Your message history lives only in this app's private SQLite database. Nothing is sent to a cloud service by Sim SMS Gateway. Uninstalling the app removes the history." />
+                </VerticalStackLayout>
+            </Border>
+
+            <Label StyleClass="Muted" HorizontalTextAlignment="Center"
+                   Text="Icons by Font Awesome Free (CC BY 4.0, SIL OFL 1.1)." />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

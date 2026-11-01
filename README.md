@@ -19,7 +19,7 @@ dotnet build .\build\sim-sms-gateway\SimSmsGateway\SimSmsGateway.csproj -t:Insta
 
 Open `build/sim-sms-gateway/SimSmsGateway.sln` in Visual Studio to work with the Android app, shared core library, and offline test harness together.
 
-Open Sim SMS Gateway on the phone and tap **Start server**. Grant SMS permission when prompted. Keep the app open while using the gateway. The app shows localhost and available Wi-Fi addresses, plus a generated API key.
+Open Sim SMS Gateway on the phone. A bottom navigation bar provides **Dashboard**, **Home** (default) and **Developer & Project**. The Dashboard shows message totals and card shortcuts to **Server**, **Message history**, **API documentation**, **Settings** (System/Light/Dark theme) and **About app** (project description fetched live from GitHub). On the Server page, tap **Start server** and grant SMS permission when prompted. Keep the app open while using the gateway. The page shows localhost and available Wi-Fi addresses, plus a generated API key. Message history and totals come from the same on-device SQLite database used by the API.
 
 ## Run the API playground
 
@@ -52,7 +52,7 @@ The destination must be an E.164 number. A `202 Accepted` response means Android
 
 `GET /api/v1/messages?status=&limit=&offset=` returns the stored history, and `GET /api/v1/stats` returns total/success/failed counts. Every attempted send is stored in a SQLite file (`messages.db`) in the app's private storage.
 
-The website has a side menu with Home, Dashboard (history and totals), Send Messages (single and bulk), API Documentation (per-endpoint docs, code examples and live try-it), and Developer & Project. An OpenAPI spec is at `web/openapi.json`.
+The website has a side menu with Home, Dashboard (history and totals), Send Messages (single and bulk), API Documentation (per-endpoint docs, code examples and live try-it), and Developer & Project. The native Android app uses a bottom tab bar (Dashboard, Home, Developer & Project) with matching light/dark themes and Font Awesome icons. An OpenAPI spec is at `web/openapi.json`.
 
 ## Safety and limitations
 

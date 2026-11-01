@@ -4,11 +4,34 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:SimSmsGateway"
+    Shell.NavBarIsVisible="False"
     Title="Sim SMS Gateway">
 
-    <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+    <TabBar>
+        <ShellContent x:Name="DashboardTab"
+                      Title="Dashboard"
+                      Route="dashboard"
+                      ContentTemplate="{DataTemplate local:DashboardPage}">
+            <ShellContent.Icon>
+                <FontImageSource FontFamily="FASolid" Glyph="&#xf009;" Size="22" Color="White" />
+            </ShellContent.Icon>
+        </ShellContent>
+        <ShellContent x:Name="HomeTab"
+                      Title="Home"
+                      Route="home"
+                      ContentTemplate="{DataTemplate local:HomePage}">
+            <ShellContent.Icon>
+                <FontImageSource FontFamily="FASolid" Glyph="&#xf015;" Size="22" Color="White" />
+            </ShellContent.Icon>
+        </ShellContent>
+        <ShellContent x:Name="DeveloperTab"
+                      Title="Developer"
+                      Route="developer"
+                      ContentTemplate="{DataTemplate local:DeveloperProjectPage}">
+            <ShellContent.Icon>
+                <FontImageSource FontFamily="FASolid" Glyph="&#xf121;" Size="22" Color="White" />
+            </ShellContent.Icon>
+        </ShellContent>
+    </TabBar>
 
 </Shell>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SimSmsGateway.HomePage"
+             Title="Home">
+    <ScrollView>
+        <VerticalStackLayout Padding="20,28,20,28" Spacing="18">
+
+            <Border StyleClass="Hero">
+                <VerticalStackLayout Spacing="16">
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                        <Image Source="simsmsgatewaylogo.svg" WidthRequest="46" HeightRequest="46" />
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="1">
+                            <Label Text="Sim SMS Gateway" FontFamily="OpenSansSemibold" FontSize="16" TextColor="White" />
+                            <Label Text="Self-hosted SMS API" FontSize="12" TextColor="#A9C1C8" />
+                        </VerticalStackLayout>
+                        <Border Grid.Column="2" x:Name="StatusPill" VerticalOptions="Center" Padding="12,7"
+                                StrokeThickness="0" StrokeShape="RoundRectangle 20">
+                            <Label x:Name="StatusPillLabel" FontFamily="OpenSansSemibold" FontSize="11" CharacterSpacing="0.8" />
+                        </Border>
+                    </Grid>
+
+                    <Label FontFamily="OpenSansSemibold" FontSize="30" TextColor="White" LineHeight="1.15"
+                           Text="Turn your Android phone into a private SMS gateway." />
+                    <Label FontSize="14" TextColor="#C7DADD" LineHeight="1.35"
+                           Text="Send single or bulk SMS from any app or website through your own SIM — no cloud SMS provider, and every message is logged as success or failed." />
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <Button StyleClass="Primary" Text="Open server" Clicked="OnNavigateClicked" CommandParameter="server"
+                                BackgroundColor="#2DD4BF" TextColor="#06201D" />
+                        <Button Grid.Column="1" StyleClass="Ghost" Text="API docs" Clicked="OnNavigateClicked" CommandParameter="api" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <Label StyleClass="Heading" Text="Why Sim SMS Gateway" />
+
+            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="12" RowSpacing="12">
+                <Border StyleClass="Card" Padding="16">
+                    <VerticalStackLayout Spacing="10">
+                        <Border StyleClass="IconBox"><Label StyleClass="Icon" Text="&#xf1d8;" /></Border>
+                        <Label StyleClass="Heading" FontSize="15" Text="Single &amp; bulk" />
+                        <Label StyleClass="Muted" Text="Up to 100 recipients in one request." />
+                    </VerticalStackLayout>
+                </Border>
+                <Border Grid.Column="1" StyleClass="Card" Padding="16">
+                    <VerticalStackLayout Spacing="10">
+                        <Border StyleClass="IconBox"><Label StyleClass="Icon" Text="&#xf1c0;" /></Border>
+                        <Label StyleClass="Heading" FontSize="15" Text="Saved history" />
+                        <Label StyleClass="Muted" Text="Stored on your phone in SQLite." />
+                    </VerticalStackLayout>
+                </Border>
+                <Border Grid.Row="1" StyleClass="Card" Padding="16">
+                    <VerticalStackLayout Spacing="10">
+                        <Border StyleClass="IconBox"><Label StyleClass="Icon" Text="&#xf121;" /></Border>
+                        <Label StyleClass="Heading" FontSize="15" Text="REST API" />
+                        <Label StyleClass="Muted" Text="Simple JSON over HTTP with a bearer key." />
+                    </VerticalStackLayout>
+                </Border>
+                <Border Grid.Row="1" Grid.Column="1" StyleClass="Card" Padding="16">
+                    <VerticalStackLayout Spacing="10">
+                        <Border StyleClass="IconBox"><Label StyleClass="Icon" Text="&#xf3ed;" /></Border>
+                        <Label StyleClass="Heading" FontSize="15" Text="Private" />
+                        <Label StyleClass="Muted" Text="Messages never touch a cloud service." />
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
+
+            <Label StyleClass="Heading" Text="Get started in 3 steps" />
+            <Border StyleClass="Card">
+                <VerticalStackLayout Spacing="16">
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="14">
+                        <Border StyleClass="IconBox" WidthRequest="34" HeightRequest="34"><Label StyleClass="Accent" Text="1" HorizontalOptions="Center" VerticalOptions="Center" /></Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="2">
+                            <Label StyleClass="Heading" FontSize="15" Text="Start the server" />
+                            <Label StyleClass="Muted" Text="Open Server and tap Start. Allow the SMS permission." />
+                        </VerticalStackLayout>
+                    </Grid>
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="14">
+                        <Border StyleClass="IconBox" WidthRequest="34" HeightRequest="34"><Label StyleClass="Accent" Text="2" HorizontalOptions="Center" VerticalOptions="Center" /></Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="2">
+                            <Label StyleClass="Heading" FontSize="15" Text="Copy the address and key" />
+                            <Label StyleClass="Muted" Text="Use the Wi-Fi address and API key from the Server page." />
+                        </VerticalStackLayout>
+                    </Grid>
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="14">
+                        <Border StyleClass="IconBox" WidthRequest="34" HeightRequest="34"><Label StyleClass="Accent" Text="3" HorizontalOptions="Center" VerticalOptions="Center" /></Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="2">
+                            <Label StyleClass="Heading" FontSize="15" Text="Send from your app or the website" />
+                            <Label StyleClass="Muted" Text="Call the API, then review results in Message history." />
+                        </VerticalStackLayout>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <Border StyleClass="Warn">
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                    <Label FontFamily="FASolid" FontSize="16" Text="&#xf071;" TextColor="#B7791F" VerticalOptions="Start" />
+                    <Label Grid.Column="1" StyleClass="WarnText"
+                           Text="Use SMS responsibly. Only message people who agreed to receive it. The API confirms Android accepted a send request — not carrier delivery." />
+                </Grid>
+            </Border>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

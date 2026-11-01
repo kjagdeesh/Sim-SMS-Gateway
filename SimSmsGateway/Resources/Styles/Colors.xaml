@@ -5,12 +5,42 @@
 
     <!-- Note: For Android please see also Platforms\Android\Resources\values\colors.xml -->
 
-    <Color x:Key="Primary">#512BD4</Color>
-    <Color x:Key="PrimaryDark">#ac99ea</Color>
-    <Color x:Key="PrimaryDarkText">#242424</Color>
-    <Color x:Key="Secondary">#DFD8F7</Color>
-    <Color x:Key="SecondaryDarkText">#9880e5</Color>
-    <Color x:Key="Tertiary">#2B0B98</Color>
+    <Color x:Key="Primary">#147D72</Color>
+    <Color x:Key="PrimaryDark">#5EEAD4</Color>
+    <Color x:Key="PrimaryDarkText">#0B1A1F</Color>
+    <Color x:Key="Secondary">#E0F4F1</Color>
+    <Color x:Key="SecondaryDarkText">#0B5F58</Color>
+    <Color x:Key="Tertiary">#0F3B3A</Color>
+
+    <!-- Light palette -->
+    <Color x:Key="BgLight">#F3F6F9</Color>
+    <Color x:Key="CardLight">#FFFFFF</Color>
+    <Color x:Key="Card2Light">#F6F9FB</Color>
+    <Color x:Key="LineLight">#E2E8EE</Color>
+    <Color x:Key="InkLight">#0F1D26</Color>
+    <Color x:Key="Ink2Light">#3B4D58</Color>
+    <Color x:Key="MutedLight">#66798A</Color>
+    <Color x:Key="AccentLight">#0F766E</Color>
+    <Color x:Key="AccentSoftLight">#E0F4F1</Color>
+    <Color x:Key="DangerLight">#B42318</Color>
+    <Color x:Key="SuccessLight">#15803D</Color>
+    <Color x:Key="WarnBgLight">#FFF6E0</Color>
+    <Color x:Key="WarnInkLight">#7A5B10</Color>
+
+    <!-- Dark palette -->
+    <Color x:Key="BgDark">#0A1115</Color>
+    <Color x:Key="CardDark">#111B21</Color>
+    <Color x:Key="Card2Dark">#0E171C</Color>
+    <Color x:Key="LineDark">#1E2E36</Color>
+    <Color x:Key="InkDark">#E8F0F3</Color>
+    <Color x:Key="Ink2Dark">#B7C6CD</Color>
+    <Color x:Key="MutedDark">#8399A3</Color>
+    <Color x:Key="AccentDark">#2DD4BF</Color>
+    <Color x:Key="AccentSoftDark">#143733</Color>
+    <Color x:Key="DangerDark">#F87171</Color>
+    <Color x:Key="SuccessDark">#4ADE80</Color>
+    <Color x:Key="WarnBgDark">#2A2410</Color>
+    <Color x:Key="WarnInkDark">#F5D98A</Color>
 
     <Color x:Key="White">White</Color>
     <Color x:Key="Black">Black</Color>

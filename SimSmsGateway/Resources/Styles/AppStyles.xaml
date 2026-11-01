@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <!-- Surfaces -->
+    <Style TargetType="Border" Class="Card">
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource CardLight}, Dark={StaticResource CardDark}}" />
+        <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource LineLight}, Dark={StaticResource LineDark}}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 22" />
+        <Setter Property="Padding" Value="18" />
+    </Style>
+    <Style TargetType="Border" Class="Inset">
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Card2Light}, Dark={StaticResource Card2Dark}}" />
+        <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource LineLight}, Dark={StaticResource LineDark}}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 14" />
+        <Setter Property="Padding" Value="13" />
+    </Style>
+    <Style TargetType="Border" Class="Warn">
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource WarnBgLight}, Dark={StaticResource WarnBgDark}}" />
+        <Setter Property="StrokeThickness" Value="0" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 18" />
+        <Setter Property="Padding" Value="16" />
+    </Style>
+    <Style TargetType="Border" Class="IconBox">
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource AccentSoftLight}, Dark={StaticResource AccentSoftDark}}" />
+        <Setter Property="StrokeThickness" Value="0" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 14" />
+        <Setter Property="WidthRequest" Value="46" />
+        <Setter Property="HeightRequest" Value="46" />
+        <Setter Property="Padding" Value="0" />
+    </Style>
+    <Style TargetType="Border" Class="Hero">
+        <Setter Property="StrokeThickness" Value="0" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 26" />
+        <Setter Property="Padding" Value="22" />
+        <Setter Property="Background">
+            <LinearGradientBrush EndPoint="1,1">
+                <GradientStop Color="#0B1A1F" Offset="0.0" />
+                <GradientStop Color="#0F5D57" Offset="1.0" />
+            </LinearGradientBrush>
+        </Setter>
+    </Style>
+
+    <!-- Text -->
+    <Style TargetType="Label" Class="Title">
+        <Setter Property="FontFamily" Value="OpenSansSemibold" />
+        <Setter Property="FontSize" Value="26" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource InkLight}, Dark={StaticResource InkDark}}" />
+    </Style>
+    <Style TargetType="Label" Class="Heading">
+        <Setter Property="FontFamily" Value="OpenSansSemibold" />
+        <Setter Property="FontSize" Value="17" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource InkLight}, Dark={StaticResource InkDark}}" />
+    </Style>
+    <Style TargetType="Label" Class="Body">
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="LineBreakMode" Value="WordWrap" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Ink2Light}, Dark={StaticResource Ink2Dark}}" />
+    </Style>
+    <Style TargetType="Label" Class="Muted">
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="LineBreakMode" Value="WordWrap" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource MutedLight}, Dark={StaticResource MutedDark}}" />
+    </Style>
+    <Style TargetType="Label" Class="Eyebrow">
+        <Setter Property="FontFamily" Value="OpenSansSemibold" />
+        <Setter Property="FontSize" Value="11" />
+        <Setter Property="CharacterSpacing" Value="1.4" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource AccentLight}, Dark={StaticResource AccentDark}}" />
+    </Style>
+    <Style TargetType="Label" Class="Accent">
+        <Setter Property="FontFamily" Value="OpenSansSemibold" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource AccentLight}, Dark={StaticResource AccentDark}}" />
+    </Style>
+    <Style TargetType="Label" Class="Mono">
+        <Setter Property="FontFamily" Value="OpenSansSemibold" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="LineBreakMode" Value="WordWrap" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource InkLight}, Dark={StaticResource InkDark}}" />
+    </Style>
+    <Style TargetType="Label" Class="WarnText">
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="LineBreakMode" Value="WordWrap" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource WarnInkLight}, Dark={StaticResource WarnInkDark}}" />
+    </Style>
+
+    <!-- Icons (Font Awesome Free) -->
+    <Style TargetType="Label" Class="Icon">
+        <Setter Property="FontFamily" Value="FASolid" />
+        <Setter Property="FontSize" Value="18" />
+        <Setter Property="HorizontalTextAlignment" Value="Center" />
+        <Setter Property="VerticalTextAlignment" Value="Center" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource AccentLight}, Dark={StaticResource AccentDark}}" />
+    </Style>
+    <Style TargetType="Label" Class="Chevron">
+        <Setter Property="FontFamily" Value="FASolid" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Text" Value="&#xf054;" />
+        <Setter Property="VerticalOptions" Value="Center" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource MutedLight}, Dark={StaticResource MutedDark}}" />
+    </Style>
+
+    <!-- Buttons -->
+    <Style TargetType="Button" Class="Primary">
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource AccentLight}, Dark={StaticResource AccentDark}}" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light=White, Dark=#06201D}" />
+        <Setter Property="FontFamily" Value="OpenSansSemibold" />
+        <Setter Property="CornerRadius" Value="14" />
+        <Setter Property="HeightRequest" Value="50" />
+    </Style>
+    <Style TargetType="Button" Class="Secondary">
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource AccentSoftLight}, Dark={StaticResource AccentSoftDark}}" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource AccentLight}, Dark={StaticResource AccentDark}}" />
+        <Setter Property="FontFamily" Value="OpenSansSemibold" />
+        <Setter Property="CornerRadius" Value="14" />
+        <Setter Property="HeightRequest" Value="46" />
+    </Style>
+    <Style TargetType="Button" Class="Ghost">
+        <Setter Property="BackgroundColor" Value="#1FFFFFFF" />
+        <Setter Property="TextColor" Value="White" />
+        <Setter Property="FontFamily" Value="OpenSansSemibold" />
+        <Setter Property="CornerRadius" Value="14" />
+        <Setter Property="BorderColor" Value="#33FFFFFF" />
+        <Setter Property="BorderWidth" Value="1" />
+        <Setter Property="HeightRequest" Value="46" />
+    </Style>
+</ResourceDictionary>

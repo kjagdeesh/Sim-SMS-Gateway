@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SimSmsGateway.AboutAppPage"
+             Shell.NavBarIsVisible="True"
+             Title="About app">
+    <ScrollView>
+        <VerticalStackLayout Padding="20,20,20,28" Spacing="16">
+
+            <Border StyleClass="Hero">
+                <VerticalStackLayout Spacing="12" HorizontalOptions="Fill">
+                    <Image Source="simsmsgatewaylogo.svg" WidthRequest="64" HeightRequest="64" HorizontalOptions="Start" />
+                    <Label Text="Sim SMS Gateway" FontFamily="OpenSansSemibold" FontSize="26" TextColor="White" />
+                    <Label x:Name="VersionLabel" FontSize="13" TextColor="#A9C1C8" />
+                    <Label x:Name="TaglineLabel" FontSize="14" TextColor="#C7DADD" LineHeight="1.35" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
+                <Border StyleClass="Card" Padding="14">
+                    <VerticalStackLayout Spacing="2">
+                        <Label x:Name="StarsLabel" StyleClass="Title" FontSize="22" Text="–" />
+                        <Label StyleClass="Muted" Text="Stars" />
+                    </VerticalStackLayout>
+                </Border>
+                <Border Grid.Column="1" StyleClass="Card" Padding="14">
+                    <VerticalStackLayout Spacing="2">
+                        <Label x:Name="ForksLabel" StyleClass="Title" FontSize="22" Text="–" />
+                        <Label StyleClass="Muted" Text="Forks" />
+                    </VerticalStackLayout>
+                </Border>
+                <Border Grid.Column="2" StyleClass="Card" Padding="14">
+                    <VerticalStackLayout Spacing="2">
+                        <Label x:Name="LanguageLabel" StyleClass="Title" FontSize="22" Text="C#" />
+                        <Label StyleClass="Muted" Text="Language" />
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
+
+            <Border StyleClass="Card">
+                <VerticalStackLayout Spacing="12">
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                        <Border StyleClass="IconBox"><Label FontFamily="FABrands" FontSize="20" Text="&#xf09b;" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"
+                                                           TextColor="{AppThemeBinding Light={StaticResource AccentLight}, Dark={StaticResource AccentDark}}" /></Border>
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="1">
+                            <Label StyleClass="Heading" Text="Project description" />
+                            <Label x:Name="SourceLabel" StyleClass="Muted" Text="Loading from GitHub…" />
+                        </VerticalStackLayout>
+                        <ActivityIndicator x:Name="Spinner" Grid.Column="2" IsRunning="True" WidthRequest="22" HeightRequest="22" />
+                    </Grid>
+                    <Label x:Name="DescriptionLabel" StyleClass="Body" FontSize="14" LineHeight="1.35" />
+                    <Label x:Name="ReadmeLabel" StyleClass="Body" IsVisible="False" />
+                    <FlexLayout x:Name="TopicsLayout" Wrap="Wrap" JustifyContent="Start" />
+                    <Label x:Name="UpdatedLabel" StyleClass="Muted" IsVisible="False" />
+                    <Button x:Name="RetryButton" StyleClass="Secondary" Text="Retry" IsVisible="False" Clicked="OnRetryClicked" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border StyleClass="Card">
+                <VerticalStackLayout Spacing="12">
+                    <Label StyleClass="Heading" Text="Highlights" />
+                    <Label StyleClass="Body" Text="•  Single and bulk SMS (up to 100 recipients per request)" />
+                    <Label StyleClass="Body" Text="•  Every message saved on-device with success or failed status" />
+                    <Label StyleClass="Body" Text="•  Bearer-key protected REST API with OpenAPI spec" />
+                    <Label StyleClass="Body" Text="•  Sends through your SIM — no cloud SMS provider" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                <Button StyleClass="Primary" Text="View on GitHub" Clicked="OnOpenRepoClicked" />
+                <Button Grid.Column="1" StyleClass="Secondary" Text="Report an issue" Clicked="OnOpenIssuesClicked" />
+            </Grid>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

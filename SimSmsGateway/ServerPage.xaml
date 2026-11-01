@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SimSmsGateway.ServerPage"
+             Shell.NavBarIsVisible="True"
+             Title="Server">
+    <ScrollView>
+        <VerticalStackLayout Padding="20,20,20,28" Spacing="16">
+
+            <Border StyleClass="Hero">
+                <VerticalStackLayout Spacing="14">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <VerticalStackLayout Spacing="3">
+                            <Label Text="GATEWAY STATUS" FontFamily="OpenSansSemibold" FontSize="11" CharacterSpacing="1.4" TextColor="#5EEAD4" />
+                            <Label x:Name="StatusTitle" Text="Stopped" FontFamily="OpenSansSemibold" FontSize="28" TextColor="White" />
+                        </VerticalStackLayout>
+                        <Border Grid.Column="1" x:Name="StatusPill" VerticalOptions="Start" Padding="12,7"
+                                StrokeThickness="0" StrokeShape="RoundRectangle 20">
+                            <Label x:Name="StatusPillLabel" FontFamily="OpenSansSemibold" FontSize="11" CharacterSpacing="0.8" />
+                        </Border>
+                    </Grid>
+                    <Label x:Name="StatusLabel" FontSize="13" TextColor="#C7DADD" LineBreakMode="WordWrap"
+                           Text="Start the server to let your apps send SMS through this phone's SIM." />
+                    <Button x:Name="ToggleButton" StyleClass="Primary" Text="Start server" Clicked="OnToggleClicked"
+                            BackgroundColor="#2DD4BF" TextColor="#06201D" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border x:Name="ErrorCard" StyleClass="Warn" IsVisible="False" BackgroundColor="#33F87171">
+                <Label x:Name="ErrorLabel" FontSize="13" TextColor="#B42318" LineBreakMode="WordWrap" />
+            </Border>
+
+            <Border StyleClass="Card">
+                <VerticalStackLayout Spacing="12">
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                        <Border StyleClass="IconBox"><Label StyleClass="Icon" Text="&#xf1eb;" /></Border>
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="1">
+                            <Label StyleClass="Heading" Text="Server address" />
+                            <Label StyleClass="Muted" Text="Use the Wi-Fi address from another device." />
+                        </VerticalStackLayout>
+                    </Grid>
+                    <Border StyleClass="Inset">
+                        <Label x:Name="AddressLabel" StyleClass="Mono" Text="Start the server to see its address" />
+                    </Border>
+                </VerticalStackLayout>
+            </Border>
+
+            <Border StyleClass="Card">
+                <VerticalStackLayout Spacing="12">
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                        <Border StyleClass="IconBox"><Label StyleClass="Icon" Text="&#xf084;" /></Border>
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="1">
+                            <Label StyleClass="Heading" Text="API access key" />
+                            <Label StyleClass="Muted" Text="Generated on this device each time the app starts." />
+                        </VerticalStackLayout>
+                    </Grid>
+                    <Border StyleClass="Inset">
+                        <Label x:Name="ApiKeyLabel" StyleClass="Mono" Text="••••••••••••••••••••••••" />
+                    </Border>
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <Button x:Name="RevealButton" StyleClass="Secondary" Text="Show key" Clicked="OnRevealClicked" />
+                        <Button Grid.Column="1" StyleClass="Secondary" Text="Copy key" Clicked="OnCopyKeyClicked" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <Border StyleClass="Card">
+                <VerticalStackLayout Spacing="12">
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                        <Border StyleClass="IconBox"><Label StyleClass="Icon" Text="&#xf121;" /></Border>
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="1">
+                            <Label StyleClass="Heading" Text="Try it" />
+                            <Label StyleClass="Muted" Text="Run this from a computer on the same Wi-Fi." />
+                        </VerticalStackLayout>
+                    </Grid>
+                    <Border StyleClass="Inset">
+                        <Label x:Name="SampleLabel" StyleClass="Mono" FontSize="11" />
+                    </Border>
+                    <Button StyleClass="Secondary" Text="Copy sample command" Clicked="OnCopySampleClicked" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border StyleClass="Warn">
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                    <Label FontFamily="FASolid" FontSize="16" Text="&#xf071;" TextColor="#B7791F" VerticalOptions="Start" />
+                    <Label Grid.Column="1" StyleClass="WarnText"
+                           Text="Messages use the SIM's default SMS subscription and your carrier plan; charges may apply. Keep this app open while the gateway is running." />
+                </Grid>
+            </Border>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
