@@ -3,12 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="SimSmsGateway.MainPage"
              BackgroundColor="#F4F7F9"
-             Title="SIM Relay">
+             Title="Sim SMS Gateway">
     <ScrollView>
         <VerticalStackLayout Padding="22,28,22,32" Spacing="20">
             <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
                 <VerticalStackLayout Spacing="3">
-                    <Label Text="SIM RELAY"
+                    <Label Text="Sim SMS Gateway"
                            FontSize="13"
                            FontAttributes="Bold"
                            TextColor="#147D72"

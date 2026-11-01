@@ -12,18 +12,22 @@ public sealed class SmsApiServer : IAsyncDisposable
     private const int MaximumBodyLength = 32 * 1024;
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
     private readonly ISmsSender _smsSender;
+    private readonly SmsMessageStore _store;
+    private readonly bool _ownsStore;
     private readonly byte[] _apiKeyBytes;
     private TcpListener? _listener;
     private CancellationTokenSource? _shutdown;
     private Task? _acceptTask;
 
-    public SmsApiServer(ISmsSender smsSender, string apiKey)
+    public SmsApiServer(ISmsSender smsSender, string apiKey, SmsMessageStore? store = null)
     {
         ArgumentNullException.ThrowIfNull(smsSender);
         ArgumentException.ThrowIfNullOrWhiteSpace(apiKey);
 
         _smsSender = smsSender;
         _apiKeyBytes = Encoding.UTF8.GetBytes(apiKey);
+        _ownsStore = store is null;
+        _store = store ?? new SmsMessageStore();
     }
 
     public int Port { get; private set; }
@@ -71,7 +75,14 @@ public sealed class SmsApiServer : IAsyncDisposable
         }
     }
 
-    public async ValueTask DisposeAsync() => await StopAsync().ConfigureAwait(false);
+    public async ValueTask DisposeAsync()
+    {
+        await StopAsync().ConfigureAwait(false);
+        if (_ownsStore)
+        {
+            _store.Dispose();
+        }
+    }
 
     private async Task AcceptClientsAsync(TcpListener listener, CancellationToken cancellationToken)
     {
@@ -98,7 +109,7 @@ public sealed class SmsApiServer : IAsyncDisposable
             using (client)
             using (var requestTimeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken))
             {
-                requestTimeout.CancelAfter(TimeSpan.FromSeconds(10));
+                requestTimeout.CancelAfter(TimeSpan.FromSeconds(60));
                 try
                 {
                     await HandleClientAsync(client.GetStream(), requestTimeout.Token).ConfigureAwait(false);
@@ -136,7 +147,11 @@ public sealed class SmsApiServer : IAsyncDisposable
             return;
         }
 
-        if (request.Method != "POST" || request.Path != "/api/v1/messages")
+        var isSend = request.Method == "POST" && request.Path == "/api/v1/messages";
+        var isBulk = request.Method == "POST" && request.Path == "/api/v1/messages/bulk";
+        var isHistory = request.Method == "GET" && request.Path == "/api/v1/messages";
+        var isStats = request.Method == "GET" && request.Path == "/api/v1/stats";
+        if (!isSend && !isBulk && !isHistory && !isStats)
         {
             await WriteJsonAsync(stream, 404, new { error = "Endpoint not found." }, cancellationToken).ConfigureAwait(false);
             return;
@@ -148,10 +163,28 @@ public sealed class SmsApiServer : IAsyncDisposable
             return;
         }
 
+        if (isStats)
+        {
+            await WriteJsonAsync(stream, 200, _store.GetStats(), cancellationToken).ConfigureAwait(false);
+            return;
+        }
+
+        if (isHistory)
+        {
+            await HandleHistoryAsync(stream, request.Query, cancellationToken).ConfigureAwait(false);
+            return;
+        }
+
         if (!request.Headers.TryGetValue("Content-Type", out var contentType) ||
             !contentType.Split(';', 2)[0].Trim().Equals("application/json", StringComparison.OrdinalIgnoreCase))
         {
             await WriteJsonAsync(stream, 415, new { error = "Content-Type must be application/json." }, cancellationToken).ConfigureAwait(false);
+            return;
+        }
+
+        if (isBulk)
+        {
+            await HandleBulkAsync(stream, request.Body, cancellationToken).ConfigureAwait(false);
             return;
         }
 
@@ -173,21 +206,120 @@ public sealed class SmsApiServer : IAsyncDisposable
             return;
         }
 
-        try
+        var record = await TrySendAsync(null, messageRequest!.To!, messageRequest.Message!, cancellationToken).ConfigureAwait(false);
+        if (record.Status == SmsStatus.Failed)
         {
-            await _smsSender.SendAsync(messageRequest!.To!, messageRequest.Message!, cancellationToken).ConfigureAwait(false);
-        }
-        catch (SmsSendException exception)
-        {
-            await WriteJsonAsync(stream, 503, new { error = exception.Message }, cancellationToken).ConfigureAwait(false);
+            await WriteJsonAsync(stream, 503, new { error = record.Error, id = record.Id, status = record.Status }, cancellationToken).ConfigureAwait(false);
             return;
         }
 
         await WriteJsonAsync(
             stream,
             202,
-            new { status = "accepted", detail = "Android accepted the SMS request; carrier delivery is not confirmed." },
+            new { status = "accepted", id = record.Id, detail = "Android accepted the SMS request; carrier delivery is not confirmed." },
             cancellationToken).ConfigureAwait(false);
+    }
+
+    private async Task HandleBulkAsync(Stream stream, byte[] body, CancellationToken cancellationToken)
+    {
+        SmsBulkRequest? bulk;
+        try
+        {
+            bulk = JsonSerializer.Deserialize<SmsBulkRequest>(body, JsonOptions);
+        }
+        catch (JsonException)
+        {
+            await WriteJsonAsync(stream, 400, new { error = "Request body must be valid JSON." }, cancellationToken).ConfigureAwait(false);
+            return;
+        }
+
+        var validationError = SmsRequestValidator.ValidateBulk(bulk);
+        if (validationError is not null)
+        {
+            await WriteJsonAsync(stream, 400, new { error = validationError }, cancellationToken).ConfigureAwait(false);
+            return;
+        }
+
+        var batchId = Guid.NewGuid().ToString("N");
+        var results = new List<object>();
+        var succeeded = 0;
+        foreach (var recipient in bulk!.Recipients!)
+        {
+            var record = await TrySendAsync(batchId, recipient!, bulk.Message!, cancellationToken).ConfigureAwait(false);
+            if (record.Status == SmsStatus.Success)
+            {
+                succeeded++;
+            }
+
+            results.Add(new { id = record.Id, to = record.Destination, status = record.Status, error = record.Error });
+        }
+
+        await WriteJsonAsync(
+            stream,
+            200,
+            new
+            {
+                batchId,
+                total = results.Count,
+                success = succeeded,
+                failed = results.Count - succeeded,
+                detail = "Success means Android accepted the SMS request; carrier delivery is not confirmed.",
+                results
+            },
+            cancellationToken).ConfigureAwait(false);
+    }
+
+    private async Task HandleHistoryAsync(Stream stream, string query, CancellationToken cancellationToken)
+    {
+        var parameters = ParseQuery(query);
+        string? status = null;
+        if (parameters.TryGetValue("status", out var statusText) && statusText.Length > 0)
+        {
+            if (statusText != SmsStatus.Success && statusText != SmsStatus.Failed)
+            {
+                await WriteJsonAsync(stream, 400, new { error = "status must be 'success' or 'failed'." }, cancellationToken).ConfigureAwait(false);
+                return;
+            }
+
+            status = statusText;
+        }
+
+        var limit = 50;
+        var offset = 0;
+        if ((parameters.TryGetValue("limit", out var limitText) && (!int.TryParse(limitText, out limit) || limit < 1 || limit > 200)) ||
+            (parameters.TryGetValue("offset", out var offsetText) && (!int.TryParse(offsetText, out offset) || offset < 0)))
+        {
+            await WriteJsonAsync(stream, 400, new { error = "limit must be 1-200 and offset must be 0 or greater." }, cancellationToken).ConfigureAwait(false);
+            return;
+        }
+
+        var items = _store.List(status, limit, offset);
+        await WriteJsonAsync(stream, 200, new { items, limit, offset }, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async Task<SmsMessageRecord> TrySendAsync(string? batchId, string destination, string message, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await _smsSender.SendAsync(destination, message, cancellationToken).ConfigureAwait(false);
+            return _store.Add(batchId, destination, message, SmsStatus.Success, null);
+        }
+        catch (SmsSendException exception)
+        {
+            return _store.Add(batchId, destination, message, SmsStatus.Failed, exception.Message);
+        }
+    }
+
+    private static Dictionary<string, string> ParseQuery(string query)
+    {
+        var result = new Dictionary<string, string>(StringComparer.Ordinal);
+        foreach (var pair in query.Split('&', StringSplitOptions.RemoveEmptyEntries))
+        {
+            var parts = pair.Split('=', 2);
+            result[Uri.UnescapeDataString(parts[0])] = parts.Length > 1 ? Uri.UnescapeDataString(parts[1].Replace('+', ' ')) : string.Empty;
+        }
+
+        return result;
     }
 
     private bool HasValidApiKey(IReadOnlyDictionary<string, string> headers)
@@ -289,8 +421,8 @@ public sealed class SmsApiServer : IAsyncDisposable
             bodyRead += read;
         }
 
-        var path = requestLine[1].Split('?', 2)[0];
-        return new HttpRequest(requestLine[0].ToUpperInvariant(), path, headers, body);
+        var target = requestLine[1].Split('?', 2);
+        return new HttpRequest(requestLine[0].ToUpperInvariant(), target[0], target.Length > 1 ? target[1] : string.Empty, headers, body);
     }
 
     private static bool HasHeaderTerminator(MemoryStream buffer)
@@ -348,6 +480,7 @@ public sealed class SmsApiServer : IAsyncDisposable
     private sealed record HttpRequest(
         string Method,
         string Path,
+        string Query,
         IReadOnlyDictionary<string, string> Headers,
         byte[] Body);
 }

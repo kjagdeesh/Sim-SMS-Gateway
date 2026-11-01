@@ -3,93 +3,364 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f4f7f9">
-  <title>SIM Relay — SMS API Playground</title>
-  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#0b1a1f">
+  <meta name="description" content="Sim SMS Gateway turns an Android phone into a private SMS API. Send single and bulk SMS through your own SIM.">
+  <title>Sim SMS Gateway — Send SMS from your own SIM</title>
+  <link rel="icon" href="./logo.svg" type="image/svg+xml">
+  <script src="./theme.js"></script>
+  <link rel="stylesheet" href="./vendor/fontawesome/css/fontawesome.min.css">
+  <link rel="stylesheet" href="./vendor/fontawesome/css/solid.min.css">
+  <link rel="stylesheet" href="./vendor/fontawesome/css/brands.min.css">
   <link rel="stylesheet" href="./styles.css">
+  <script src="./countries.js" defer></script>
   <script src="./app.js" defer></script>
 </head>
 <body>
-  <main class="shell">
-    <header class="topbar">
-      <a class="brand" href="./" aria-label="SIM Relay home">
-        <span class="brand-mark" aria-hidden="true">S</span>
-        <span>SIM Relay</span>
+  <div id="splash" class="splash" aria-hidden="true">
+    <img class="splash-logo" src="./logo.svg" alt="" width="84" height="84">
+    <div class="splash-name">Sim SMS Gateway</div>
+    <div class="splash-tag">Your SIM. Your SMS API.</div>
+    <div class="splash-bar"><span></span></div>
+  </div>
+
+  <div class="app">
+    <aside id="sidebar" class="sidebar" aria-label="Main navigation">
+      <a class="brand" href="#/home">
+        <img class="brand-logo" src="./logo.svg" alt="" width="40" height="40">
+        <span class="brand-text">Sim SMS Gateway<small>Self-hosted SMS API</small></span>
       </a>
-      <span class="local-badge"><span class="dot"></span> SELF-HOSTED</span>
-    </header>
 
-    <section class="intro">
-      <p class="eyebrow">SMS API PLAYGROUND</p>
-      <h1>Send from your<br><span>own SIM.</span></h1>
-      <p class="intro-copy">Connect to your Android gateway and try a real SMS request. Your message goes through the SIM and carrier plan in that phone.</p>
-    </section>
+      <nav class="menu">
+        <p class="menu-label">Workspace</p>
+        <a class="menu-item" href="#/home" data-route="home"><i class="fa-solid fa-house" aria-hidden="true"></i>Home</a>
+        <a class="menu-item" href="#/dashboard" data-route="dashboard"><i class="fa-solid fa-chart-line" aria-hidden="true"></i>Dashboard</a>
+        <a class="menu-item" href="#/send" data-route="send"><i class="fa-solid fa-paper-plane" aria-hidden="true"></i>Send Messages</a>
+        <p class="menu-label">Developers</p>
+        <a class="menu-item" href="#/api" data-route="api"><i class="fa-solid fa-code" aria-hidden="true"></i>API Documentation</a>
+        <a class="menu-item" href="#/about" data-route="about"><i class="fa-solid fa-user-tie" aria-hidden="true"></i>Developer &amp; Project</a>
+      </nav>
 
-    <section class="panel connection-panel" aria-labelledby="connection-heading">
-      <div class="section-heading">
-        <div>
-          <p class="step">01 / CONNECT</p>
-          <h2 id="connection-heading">Gateway details</h2>
+      <button id="connection-card" class="connection-card" type="button">
+        <span class="conn-icon"><i class="fa-solid fa-plug" aria-hidden="true"></i><span class="conn-dot" id="conn-dot"></span></span>
+        <span class="conn-text">
+          <strong id="conn-title">Not connected</strong>
+          <small id="conn-detail">Click to connect your phone</small>
+        </span>
+        <i class="fa-solid fa-chevron-right conn-chevron" aria-hidden="true"></i>
+      </button>
+    </aside>
+    <div id="scrim" class="scrim" hidden></div>
+
+    <div class="main">
+      <header class="topbar">
+        <button id="menu-toggle" class="icon-button menu-toggle" type="button" aria-label="Open menu" aria-controls="sidebar" aria-expanded="false"><i class="fa-solid fa-bars" aria-hidden="true"></i></button>
+        <h1 id="page-title" class="page-title">Home</h1>
+        <button id="theme-toggle" class="icon-button" type="button" aria-label="Switch to dark theme" title="Toggle theme"><i class="fa-solid fa-moon" aria-hidden="true"></i></button>
+        <button id="topbar-connect" class="button button-secondary" type="button"><i class="fa-solid fa-plug" aria-hidden="true"></i><span>Connect</span></button>
+      </header>
+
+      <!-- HOME -->
+      <section id="view-home" class="view view-wide" data-title="Home" hidden>
+        <div class="hero">
+          <div class="hero-copy-block">
+            <span class="pill"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Open source · Self-hosted · No cloud SMS provider</span>
+            <h2>Turn your Android phone into a <span class="grad">private SMS gateway.</span></h2>
+            <p class="hero-copy">Sim SMS Gateway runs a secure-by-design REST API on your phone. Send single or bulk SMS from any website or backend through your own SIM and plan — and see every message as success or failed.</p>
+            <div class="hero-actions">
+              <a class="button button-hero" href="#/send"><i class="fa-solid fa-paper-plane" aria-hidden="true"></i>Send a message</a>
+              <a class="button button-outline-light" href="#/api"><i class="fa-solid fa-code" aria-hidden="true"></i>Explore the API</a>
+            </div>
+            <ul class="hero-points">
+              <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i>Bulk sending up to 100 recipients</li>
+              <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i>SQLite history on your phone</li>
+              <li><i class="fa-solid fa-circle-check" aria-hidden="true"></i>Bearer-key protected</li>
+            </ul>
+          </div>
+
+          <div class="hero-visual" aria-hidden="true">
+            <div class="code-window">
+              <div class="window-bar"><span></span><span></span><span></span><em>POST /api/v1/messages/bulk</em></div>
+<pre class="window-body"><span class="tk-c"># send one message to many people</span>
+<span class="tk-k">curl</span> -X POST <span class="tk-s">"http://phone:8765/api/v1/messages/bulk"</span> \
+  -H <span class="tk-s">"Authorization: Bearer ••••••"</span> \
+  -d <span class="tk-s">'{"recipients":["+9198…","+1415…"],
+       "message":"Order #4821 shipped"}'</span></pre>
+              <div class="window-result">
+                <span class="status-chip ok"><i class="fa-solid fa-check" aria-hidden="true"></i> 2 success</span>
+                <span class="status-chip bad"><i class="fa-solid fa-xmark" aria-hidden="true"></i> 0 failed</span>
+                <span class="window-code">HTTP 200</span>
+              </div>
+            </div>
+            <div class="float-card float-phone"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i><div><strong>Android gateway</strong><small>Online · SIM ready</small></div></div>
+            <div class="float-card float-sent"><i class="fa-solid fa-circle-check" aria-hidden="true"></i><div><strong>Message accepted</strong><small>Sent via your carrier</small></div></div>
+          </div>
         </div>
-        <button id="check-connection" class="button button-secondary" type="button">Check connection</button>
-      </div>
-      <div class="field-grid">
-        <label class="field">
-          <span>Server URL</span>
-          <input id="server-url" type="url" inputmode="url" autocomplete="url" placeholder="http://192.168.1.25:8765" required>
-          <small>Use localhost on the phone, or its Wi-Fi IP from another device.</small>
-        </label>
-        <label class="field">
-          <span>Bearer API key</span>
-          <input id="api-key" type="password" autocomplete="off" placeholder="Paste the key shown in the Android app" required>
-          <small>The key stays in this browser session and is not saved.</small>
-        </label>
-      </div>
-      <p id="connection-status" class="inline-status" role="status" aria-live="polite">Enter the address and key shown by your Android gateway.</p>
-    </section>
 
-    <section class="panel compose-panel" aria-labelledby="compose-heading">
-      <div class="section-heading">
-        <div>
-          <p class="step">02 / COMPOSE</p>
-          <h2 id="compose-heading">Try an SMS request</h2>
+        <div class="metrics">
+          <div class="metric"><strong>100</strong><span>recipients per bulk request</span></div>
+          <div class="metric"><strong>0</strong><span>cloud SMS providers needed</span></div>
+          <div class="metric"><strong>5</strong><span>simple REST endpoints</span></div>
+          <div class="metric"><strong>100%</strong><span>of data stays on your phone</span></div>
         </div>
-        <span class="method">POST</span>
-      </div>
-      <form id="sms-form">
-        <label class="field">
-          <span>Destination number</span>
-          <input id="destination" type="tel" inputmode="tel" autocomplete="tel" placeholder="+14155550123" pattern="^\+[1-9]\d{7,14}$" required>
-          <small>Enter an international number in E.164 format, including + and country code.</small>
-        </label>
-        <label class="field">
-          <span>Message</span>
-          <textarea id="message" rows="5" maxlength="1600" placeholder="Write your message..." required></textarea>
-          <span class="field-footer"><small>Messages are sent by the Android device's default SIM.</small><small id="character-count">0 / 1600</small></span>
-        </label>
-        <button id="send-button" class="button button-primary" type="submit">
-          <span>Send SMS</span>
-          <span aria-hidden="true">↗</span>
-        </button>
-      </form>
-      <p class="notice"><strong>Carrier charges may apply.</strong> A successful response means Android accepted the request; it does not confirm delivery.</p>
-    </section>
 
-    <section class="panel response-panel" aria-labelledby="response-heading">
-      <div class="section-heading">
-        <div>
-          <p class="step">03 / RESPONSE</p>
-          <h2 id="response-heading">API response</h2>
+        <div class="section-title">
+          <p class="kicker">Why Sim SMS Gateway</p>
+          <h3>Everything you need to send SMS from your own number</h3>
         </div>
-        <span id="response-code" class="response-code">—</span>
-      </div>
-      <pre id="response-body" class="response-body" aria-live="polite">Your result will appear here.</pre>
-    </section>
+        <div class="feature-grid">
+          <article class="feature"><span class="feature-icon"><i class="fa-solid fa-paper-plane" aria-hidden="true"></i></span><h4>Single &amp; bulk sending</h4><p>Message one person or up to 100 recipients in a single request, with a clear result for every number.</p></article>
+          <article class="feature"><span class="feature-icon"><i class="fa-solid fa-chart-line" aria-hidden="true"></i></span><h4>Live status dashboard</h4><p>Track total, success and failed messages with filters and a full history stored on the device.</p></article>
+          <article class="feature"><span class="feature-icon"><i class="fa-solid fa-code" aria-hidden="true"></i></span><h4>Developer-friendly API</h4><p>JSON over HTTP with an OpenAPI spec, copy-ready cURL, JavaScript and Python examples and a live tester.</p></article>
+          <article class="feature"><span class="feature-icon"><i class="fa-solid fa-lock" aria-hidden="true"></i></span><h4>Private by design</h4><p>Messages go from your app to your phone and out through your SIM. No third party reads your content.</p></article>
+          <article class="feature"><span class="feature-icon"><i class="fa-solid fa-globe" aria-hidden="true"></i></span><h4>Country-aware numbers</h4><p>Pick a country once and local numbers are converted to international format automatically.</p></article>
+          <article class="feature"><span class="feature-icon"><i class="fa-solid fa-database" aria-hidden="true"></i></span><h4>Persistent history</h4><p>Every attempt is saved in a SQLite database, so the dashboard shows your previous messages anytime.</p></article>
+        </div>
 
-    <footer>
-      <span>Messages stay on your device and carrier network.</span>
-      <span>Never expose the gateway port to the public internet.</span>
-    </footer>
-  </main>
+        <div class="section-title">
+          <p class="kicker">How it works</p>
+          <h3>From your app to the carrier network in four steps</h3>
+        </div>
+        <div class="flow">
+          <div class="flow-step"><span class="flow-icon"><i class="fa-solid fa-laptop-code" aria-hidden="true"></i></span><strong>Your app or website</strong><small>Calls the REST API</small></div>
+          <i class="fa-solid fa-arrow-right flow-arrow" aria-hidden="true"></i>
+          <div class="flow-step"><span class="flow-icon"><i class="fa-solid fa-server" aria-hidden="true"></i></span><strong>Gateway API</strong><small>Validates and authenticates</small></div>
+          <i class="fa-solid fa-arrow-right flow-arrow" aria-hidden="true"></i>
+          <div class="flow-step"><span class="flow-icon"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i></span><strong>Android phone</strong><small>Hands off to SMS manager</small></div>
+          <i class="fa-solid fa-arrow-right flow-arrow" aria-hidden="true"></i>
+          <div class="flow-step"><span class="flow-icon"><i class="fa-solid fa-sim-card" aria-hidden="true"></i></span><strong>Your SIM &amp; carrier</strong><small>Delivers the SMS</small></div>
+        </div>
+
+        <div class="panel steps-panel">
+          <h3 class="panel-title"><i class="fa-solid fa-rocket" aria-hidden="true"></i> Get started in 3 steps</h3>
+          <ol class="steps">
+            <li><span class="step-num">1</span><div><strong>Install the Android app</strong><p>Download it from the <a href="#/about">Developer &amp; Project</a> page and open it.</p></div></li>
+            <li><span class="step-num">2</span><div><strong>Start the server</strong><p>Tap <em>Start server</em>, allow SMS permission, then note the address and API key.</p></div></li>
+            <li><span class="step-num">3</span><div><strong>Connect and send</strong><p>Click <button class="link-button" type="button" data-action="connect">Connect</button>, paste both values, then use <a href="#/send">Send Messages</a>.</p></div></li>
+          </ol>
+        </div>
+
+        <div class="cta-band">
+          <div><h3>Ready to send your first message?</h3><p>Connect your phone and send in under a minute.</p></div>
+          <div class="cta-actions">
+            <button class="button button-hero" type="button" data-action="connect"><i class="fa-solid fa-plug" aria-hidden="true"></i>Connect gateway</button>
+            <a class="button button-outline-light" href="#/about"><i class="fa-solid fa-download" aria-hidden="true"></i>Get the app</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- DASHBOARD -->
+      <section id="view-dashboard" class="view" data-title="Dashboard" hidden>
+        <div class="page-head">
+          <div><h2>Dashboard</h2><p>Every message the gateway has attempted, stored on your phone.</p></div>
+          <button id="refresh-history" class="button button-secondary" type="button"><i class="fa-solid fa-rotate" aria-hidden="true"></i>Refresh</button>
+        </div>
+
+        <div class="stats">
+          <div class="stat"><span class="stat-icon tone-blue"><i class="fa-solid fa-envelope" aria-hidden="true"></i></span><div><span class="stat-label">Total messages</span><span id="stat-total" class="stat-value">0</span></div></div>
+          <div class="stat"><span class="stat-icon tone-green"><i class="fa-solid fa-circle-check" aria-hidden="true"></i></span><div><span class="stat-label">Success</span><span id="stat-success" class="stat-value">0</span></div></div>
+          <div class="stat"><span class="stat-icon tone-red"><i class="fa-solid fa-circle-xmark" aria-hidden="true"></i></span><div><span class="stat-label">Failed</span><span id="stat-failed" class="stat-value">0</span></div></div>
+          <div class="stat"><span class="stat-icon tone-amber"><i class="fa-solid fa-gauge-high" aria-hidden="true"></i></span><div><span class="stat-label">Success rate</span><span id="stat-rate" class="stat-value">0%</span></div><progress id="stat-progress" max="100" value="0"></progress></div>
+        </div>
+
+        <div class="panel">
+          <div class="toolbar">
+            <h3 class="panel-title"><i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i> Message history</h3>
+            <div class="filters" role="group" aria-label="Filter messages by status">
+              <button class="chip" type="button" data-filter="" aria-pressed="true">All</button>
+              <button class="chip" type="button" data-filter="success" aria-pressed="false">Success</button>
+              <button class="chip" type="button" data-filter="failed" aria-pressed="false">Failed</button>
+            </div>
+          </div>
+
+          <div id="history-empty" class="empty-state">
+            <div class="empty-icon" aria-hidden="true"><i class="fa-solid fa-inbox"></i></div>
+            <h4 id="history-empty-title">No messages yet</h4>
+            <p id="history-empty-text">Messages you send will appear here.</p>
+            <div id="history-empty-actions" class="empty-actions"></div>
+          </div>
+
+          <div id="history-table-wrap" class="table-wrap" hidden>
+            <table class="history">
+              <thead><tr><th>Time</th><th>Number</th><th>Message</th><th>Status</th></tr></thead>
+              <tbody id="history-body"></tbody>
+            </table>
+          </div>
+          <div class="pager"><button id="load-more" class="button button-secondary" type="button" hidden>Load older messages</button></div>
+          <p id="history-status" class="inline-status" role="status" aria-live="polite"></p>
+        </div>
+      </section>
+
+      <!-- SEND -->
+      <section id="view-send" class="view" data-title="Send Messages" hidden>
+        <div class="page-head">
+          <div><h2>Send messages</h2><p>Messages leave through the default SIM of your Android phone.</p></div>
+        </div>
+
+        <div class="send-layout">
+          <form id="sms-form" class="panel" novalidate>
+            <div class="tabs" role="tablist" aria-label="Send mode">
+              <button class="tab" id="tab-single" type="button" role="tab" aria-selected="true"><i class="fa-solid fa-user" aria-hidden="true"></i>Single message</button>
+              <button class="tab" id="tab-bulk" type="button" role="tab" aria-selected="false"><i class="fa-solid fa-users" aria-hidden="true"></i>Bulk messages</button>
+            </div>
+
+            <div class="field">
+              <label for="country">Default country</label>
+              <select id="country" class="select"></select>
+              <small>Numbers typed without a <code>+</code> use this country code.</small>
+            </div>
+
+            <div id="single-fields" class="field">
+              <label for="destination">Phone number</label>
+              <div class="phone-input">
+                <span id="dial-prefix" class="dial-prefix" aria-hidden="true">+91</span>
+                <input id="destination" type="tel" inputmode="tel" autocomplete="off" placeholder="98765 43210">
+              </div>
+              <small id="destination-preview" class="preview">Enter a number to preview the full international format.</small>
+            </div>
+
+            <div id="bulk-fields" class="field" hidden>
+              <label for="recipient-entry">Recipients</label>
+              <div id="recipient-box" class="recipient-box">
+                <div id="recipient-chips" class="chips"></div>
+                <input id="recipient-entry" class="recipient-entry" type="text" inputmode="tel" autocomplete="off" placeholder="Type or paste numbers, press Enter">
+              </div>
+              <div class="recipient-bar">
+                <span id="recipient-count" class="recipient-count">0 valid recipients</span>
+                <span class="recipient-actions">
+                  <label class="link-button file-label"><i class="fa-solid fa-file-import" aria-hidden="true"></i> Import .csv / .txt<input id="recipient-file" type="file" accept=".csv,.txt,text/plain,text/csv" hidden></label>
+                  <button id="recipient-clear" class="link-button" type="button"><i class="fa-solid fa-trash-can" aria-hidden="true"></i> Clear all</button>
+                </span>
+              </div>
+              <small>Paste a list separated by new lines, commas, or spaces. Up to 100 unique numbers; invalid ones are highlighted in red.</small>
+              <p id="recipient-note" class="inline-status" role="status" aria-live="polite"></p>
+            </div>
+
+            <div class="field">
+              <label for="message">Message</label>
+              <textarea id="message" rows="5" maxlength="1600" placeholder="Write your message..."></textarea>
+              <span class="field-footer"><small>Long messages are split into several SMS parts by Android.</small><small id="character-count">0 / 1600</small></span>
+            </div>
+
+            <p id="send-error" class="form-error" role="alert" hidden></p>
+            <button id="send-button" class="button button-primary button-block" type="submit"><i class="fa-solid fa-paper-plane" aria-hidden="true"></i><span id="send-label">Send SMS</span></button>
+            <p class="notice"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i><span><strong>Carrier charges may apply.</strong> Success means Android accepted the request; it does not confirm delivery.</span></p>
+          </form>
+
+          <div class="panel result-panel" aria-live="polite">
+            <div class="toolbar">
+              <h3 class="panel-title"><i class="fa-solid fa-list-check" aria-hidden="true"></i> Result</h3>
+              <span id="response-code" class="response-code">—</span>
+            </div>
+            <div id="result-empty" class="empty-state compact">
+              <div class="empty-icon" aria-hidden="true"><i class="fa-solid fa-paper-plane"></i></div>
+              <p>Send a message and the result will show up here.</p>
+            </div>
+            <div id="result-summary" class="result-summary" hidden>
+              <div class="result-counts"><span class="badge badge-success" id="result-success">0 success</span><span class="badge badge-failed" id="result-failed">0 failed</span></div>
+              <ul id="result-list" class="result-list"></ul>
+            </div>
+            <details class="raw">
+              <summary>Raw API response</summary>
+              <pre id="response-body" class="code-block">—</pre>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      <!-- API DOCS -->
+      <section id="view-api" class="view view-wide" data-title="API Documentation" hidden>
+        <div class="page-head">
+          <div><h2>API documentation</h2><p>Pick an endpoint on the left. Each one explains what it does, shows code you can copy, and lets you try it live.</p></div>
+          <a class="button button-secondary" href="./openapi.json" target="_blank" rel="noopener"><i class="fa-solid fa-file-code" aria-hidden="true"></i>OpenAPI spec</a>
+        </div>
+        <div class="docs-layout">
+          <nav id="docs-nav" class="docs-nav" aria-label="API endpoints"></nav>
+          <div id="docs-content" class="docs-content"></div>
+        </div>
+      </section>
+
+      <!-- ABOUT -->
+      <section id="view-about" class="view" data-title="Developer &amp; Project" hidden>
+        <div class="page-head">
+          <div><h2>Developer &amp; Project</h2><p>Sim SMS Gateway is open source. Star it, download it, or send feedback.</p></div>
+        </div>
+
+        <div class="about-grid">
+          <article class="panel project-card">
+            <div class="project-head">
+              <img class="project-logo" src="./logo.svg" alt="" width="64" height="64">
+              <div><h3>Sim SMS Gateway</h3><p>Self-hosted Android SMS gateway with REST API, bulk sending and a status dashboard.</p></div>
+            </div>
+            <ul class="tags"><li>.NET MAUI</li><li>Android</li><li>SQLite</li><li>REST API</li><li>Open source</li></ul>
+            <div class="link-row">
+              <a class="button button-primary" href="https://github.com/kjagdeesh/Sim-SMS-Gateway/releases/latest" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-android" aria-hidden="true"></i>Download Android app</a>
+              <a class="button button-secondary" href="https://github.com/kjagdeesh/Sim-SMS-Gateway" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-star" aria-hidden="true"></i>Star &amp; follow on GitHub</a>
+            </div>
+            <p class="muted small">Download opens the latest release of the GitHub project. If you install an APK, allow “install unknown apps” for your browser, and only install builds from the official repository.</p>
+          </article>
+
+          <article class="panel developer-card">
+            <div class="dev-head">
+              <img id="dev-avatar" class="avatar" alt="" width="88" height="88" hidden>
+              <span id="dev-avatar-fallback" class="avatar avatar-fallback" aria-hidden="true"><i class="fa-solid fa-user"></i></span>
+              <div>
+                <h3 id="dev-name">Jagdeesh</h3>
+                <p id="dev-meta" class="muted">Developer · GitHub @kjagdeesh</p>
+              </div>
+            </div>
+            <div class="dev-stats">
+              <div><strong id="dev-repos">—</strong><span>Public repos</span></div>
+              <div><strong id="dev-followers">—</strong><span>Followers</span></div>
+            </div>
+            <div class="link-row column">
+              <a class="social" href="https://github.com/kjagdeesh" target="_blank" rel="noopener noreferrer"><span class="social-icon"><i class="fa-brands fa-github" aria-hidden="true"></i></span><span><strong>GitHub</strong><small>github.com/kjagdeesh</small></span><i class="fa-solid fa-arrow-up-right-from-square social-out" aria-hidden="true"></i></a>
+              <a class="social" href="https://www.linkedin.com/in/kammarijagdeesh" target="_blank" rel="noopener noreferrer"><span class="social-icon linkedin"><i class="fa-brands fa-linkedin-in" aria-hidden="true"></i></span><span><strong>LinkedIn</strong><small>linkedin.com/in/kammarijagdeesh</small></span><i class="fa-solid fa-arrow-up-right-from-square social-out" aria-hidden="true"></i></a>
+              <a class="social" href="https://github.com/kjagdeesh/Sim-SMS-Gateway" target="_blank" rel="noopener noreferrer"><span class="social-icon repo"><i class="fa-solid fa-code-branch" aria-hidden="true"></i></span><span><strong>Project repository</strong><small>github.com/kjagdeesh/Sim-SMS-Gateway</small></span><i class="fa-solid fa-arrow-up-right-from-square social-out" aria-hidden="true"></i></a>
+            </div>
+          </article>
+        </div>
+
+        <div class="panel">
+          <h3 class="panel-title"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Good to know</h3>
+          <ul class="plain-list">
+            <li>The gateway speaks plain HTTP. Use it on a trusted network and never expose the port to the public internet.</li>
+            <li>A website hosted over HTTPS cannot call an HTTP phone address; browsers block mixed content. Use this dashboard locally or put the phone behind a secure tunnel.</li>
+            <li>Carrier charges apply to every SMS. Only message people who agreed to receive it.</li>
+          </ul>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <span class="footer-brand"><img src="./logo.svg" alt="" width="20" height="20"> Sim SMS Gateway</span>
+        <span>Messages stay on your device and carrier network.</span>
+        <span class="footer-links"><a href="https://github.com/kjagdeesh/Sim-SMS-Gateway" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-github" aria-hidden="true"></i> GitHub</a><a href="https://www.linkedin.com/in/kammarijagdeesh" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-linkedin-in" aria-hidden="true"></i> LinkedIn</a></span>
+      </footer>
+    </div>
+  </div>
+
+  <dialog id="connection-dialog" class="dialog" aria-labelledby="dialog-title">
+    <form method="dialog" id="connection-form" class="dialog-body" novalidate>
+      <div class="dialog-icon"><i class="fa-solid fa-plug" aria-hidden="true"></i></div>
+      <h3 id="dialog-title">Connect to your gateway</h3>
+      <p class="muted">Open the Android app, tap <em>Start server</em>, then copy the address and API key shown there.</p>
+      <div class="field">
+        <label for="server-url">Server URL</label>
+        <input id="server-url" class="input" type="url" inputmode="url" autocomplete="url" placeholder="http://192.168.1.25:8765">
+        <small>Use the phone's Wi-Fi address from another device.</small>
+      </div>
+      <div class="field">
+        <label for="api-key">API key</label>
+        <input id="api-key" class="input" type="password" autocomplete="off" placeholder="Paste the key shown in the app">
+        <small>Kept for this browser tab only.</small>
+      </div>
+      <p id="connection-status" class="inline-status" role="status" aria-live="polite"></p>
+      <div class="dialog-actions">
+        <button id="dialog-close" class="button button-secondary" type="button">Close</button>
+        <button id="check-connection" class="button button-primary" type="submit"><i class="fa-solid fa-plug" aria-hidden="true"></i>Connect</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 </body>
 </html>

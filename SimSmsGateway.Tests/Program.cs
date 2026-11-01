@@ -48,6 +48,91 @@ Check((await accepted.Content.ReadAsStringAsync()).Contains("delivery is not con
 var unavailable = await PostSmsAsync(client, "test-key", "+14155550124", "fail");
 Check(unavailable.StatusCode == HttpStatusCode.ServiceUnavailable, "SIM sender errors are returned explicitly");
 
+using var authedGet = new HttpClient { BaseAddress = client.BaseAddress };
+authedGet.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "test-key");
+
+var historyUnauthorized = await client.GetAsync("/api/v1/messages");
+Check(historyUnauthorized.StatusCode == HttpStatusCode.Unauthorized, "history requires bearer authentication");
+
+var bulkUnauthorized = await PostJsonAsync(client, null, "/api/v1/messages/bulk", """{"recipients":["+14155550123"],"message":"hi"}""");
+Check(bulkUnauthorized.StatusCode == HttpStatusCode.Unauthorized, "bulk send requires bearer authentication");
+
+var bulkEmpty = await PostJsonAsync(client, "test-key", "/api/v1/messages/bulk", """{"recipients":[],"message":"hi"}""");
+Check(bulkEmpty.StatusCode == HttpStatusCode.BadRequest, "bulk rejects an empty recipient list");
+
+var bulkInvalid = await PostJsonAsync(client, "test-key", "/api/v1/messages/bulk", """{"recipients":["+14155550123","12345"],"message":"hi"}""");
+Check(bulkInvalid.StatusCode == HttpStatusCode.BadRequest, "bulk rejects an invalid recipient without sending any");
+
+var bulkDuplicate = await PostJsonAsync(client, "test-key", "/api/v1/messages/bulk", """{"recipients":["+14155550123","+14155550123"],"message":"hi"}""");
+Check(bulkDuplicate.StatusCode == HttpStatusCode.BadRequest, "bulk rejects duplicate recipients");
+
+var tooMany = JsonSerializer.Serialize(new
+{
+    recipients = Enumerable.Range(0, SmsRequestValidator.MaximumBulkRecipients + 1).Select(i => $"+1415555{i:D4}"),
+    message = "hi"
+});
+var bulkTooMany = await PostJsonAsync(client, "test-key", "/api/v1/messages/bulk", tooMany);
+Check(bulkTooMany.StatusCode == HttpStatusCode.BadRequest, "bulk rejects more than the recipient limit");
+
+var beforeBulk = sender.Messages.Count;
+var bulk = await PostJsonAsync(client, "test-key", "/api/v1/messages/bulk", """{"recipients":["+14155550201","+14155550202","+14155550203"],"message":"Hi all"}""");
+Check(bulk.StatusCode == HttpStatusCode.OK, "bulk returns 200");
+using (var bulkJson = JsonDocument.Parse(await bulk.Content.ReadAsStringAsync()))
+{
+    Check(bulkJson.RootElement.GetProperty("total").GetInt32() == 3, "bulk reports total");
+    Check(bulkJson.RootElement.GetProperty("success").GetInt32() == 3, "bulk reports success count");
+    Check(bulkJson.RootElement.GetProperty("results").GetArrayLength() == 3, "bulk reports per-recipient results");
+}
+Check(sender.Messages.Count - beforeBulk == 3, "bulk sends one message per recipient");
+
+var failBulk = await PostJsonAsync(client, "test-key", "/api/v1/messages/bulk", """{"recipients":["+14155550301","+14155550302"],"message":"fail"}""");
+using (var failJson = JsonDocument.Parse(await failBulk.Content.ReadAsStringAsync()))
+{
+    Check(failJson.RootElement.GetProperty("failed").GetInt32() == 2, "bulk reports failed recipients");
+    Check(failJson.RootElement.GetProperty("results")[0].GetProperty("error").GetString() == "SIM unavailable.", "bulk includes the failure reason");
+}
+
+// Totals so far: 1 single success + 1 single failure + 3 bulk success + 2 bulk failures.
+using (var stats = JsonDocument.Parse(await authedGet.GetStringAsync("/api/v1/stats")))
+{
+    Check(stats.RootElement.GetProperty("total").GetInt32() == 7, "stats count every attempted send");
+    Check(stats.RootElement.GetProperty("success").GetInt32() == 4, "stats count successes");
+    Check(stats.RootElement.GetProperty("failed").GetInt32() == 3, "stats count failures");
+}
+
+using (var all = JsonDocument.Parse(await authedGet.GetStringAsync("/api/v1/messages")))
+{
+    var items = all.RootElement.GetProperty("items");
+    Check(items.GetArrayLength() == 7, "history lists stored messages");
+    Check(items[0].GetProperty("destination").GetString() == "+14155550302", "history is newest first");
+    Check(items[0].GetProperty("status").GetString() == "failed", "history records failed status");
+}
+
+using (var failedOnly = JsonDocument.Parse(await authedGet.GetStringAsync("/api/v1/messages?status=failed&limit=2")))
+{
+    var items = failedOnly.RootElement.GetProperty("items");
+    Check(items.GetArrayLength() == 2 && items.EnumerateArray().All(i => i.GetProperty("status").GetString() == "failed"), "history filters by status and limit");
+}
+
+Check((await authedGet.GetAsync("/api/v1/messages?status=bogus")).StatusCode == HttpStatusCode.BadRequest, "history rejects an unknown status filter");
+
+var dbPath = Path.Combine(Path.GetTempPath(), $"sim-sms-gateway-test-{Guid.NewGuid():N}.db");
+try
+{
+    using (var fileStore = new SmsMessageStore(dbPath))
+    {
+        fileStore.Add(null, "+14155550123", "persisted", SmsStatus.Success, null);
+    }
+
+    using var reopened = new SmsMessageStore(dbPath);
+    Check(reopened.List(null, 10, 0).Count == 1, "message history persists in the SQLite file");
+}
+finally
+{
+    Microsoft.Data.Sqlite.SqliteConnection.ClearAllPools();
+    File.Delete(dbPath);
+}
+
 using var preflight = new HttpRequestMessage(HttpMethod.Options, "/api/v1/messages");
 preflight.Headers.Add("Origin", "http://localhost:8766");
 var options = await client.SendAsync(preflight);
@@ -102,6 +187,21 @@ static async Task<HttpResponseMessage> PostSmsAsync(
             JsonSerializer.Serialize(new SmsMessageRequest(destination, message)),
             Encoding.UTF8,
             contentType)
+    };
+
+    if (apiKey is not null)
+    {
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
+    }
+
+    return await client.SendAsync(request);
+}
+
+static async Task<HttpResponseMessage> PostJsonAsync(HttpClient client, string? apiKey, string path, string json)
+{
+    using var request = new HttpRequestMessage(HttpMethod.Post, path)
+    {
+        Content = new StringContent(json, Encoding.UTF8, "application/json")
     };
 
     if (apiKey is not null)

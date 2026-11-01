@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Sim SMS Gateway logo">
+  <defs>
+    <linearGradient id="bg" x1="8" y1="4" x2="58" y2="62" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2dd4bf"/>
+      <stop offset="1" stop-color="#0b5f68"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="16" fill="url(#bg)"/>
+  <path d="M16 18a4 4 0 0 1 4-4h14l10 10v26a4 4 0 0 1-4 4H20a4 4 0 0 1-4-4z" fill="#fff"/>
+  <rect x="22" y="30" width="16" height="14" rx="3" fill="#0f766e"/>
+  <path d="M22 37h16M30 30v14" stroke="#fff" stroke-width="1.6" opacity=".55"/>
+  <path d="M46 12.5a11 11 0 0 1 6.5 6.5M46 6.5a17 17 0 0 1 11.5 11.5" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" opacity=".95"/>
+  <circle cx="45.2" cy="19.2" r="2.6" fill="#fff"/>
+</svg>

@@ -26,7 +26,7 @@
 		<MauiXamlInflator>SourceGen</MauiXamlInflator>
 
 		<!-- Display name -->
-		<ApplicationTitle>SIM Relay</ApplicationTitle>
+		<ApplicationTitle>Sim SMS Gateway</ApplicationTitle>
 
 		<!-- App Identifier -->
 		<ApplicationId>dev.simsmsgateway.simrelay</ApplicationId>

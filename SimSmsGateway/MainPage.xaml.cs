@@ -14,6 +14,7 @@ public partial class MainPage : ContentPage
         .Replace('+', '-')
         .Replace('/', '_');
     private SmsApiServer? _server;
+    private SmsMessageStore? _store;
 
     public MainPage()
     {
@@ -35,7 +36,8 @@ public partial class MainPage : ContentPage
                 return;
             }
 
-            _server = new SmsApiServer(new AndroidSmsSender(), _apiKey);
+            _store ??= new SmsMessageStore(Path.Combine(FileSystem.AppDataDirectory, "messages.db"));
+            _server = new SmsApiServer(new AndroidSmsSender(), _apiKey, _store);
             await _server.StartAsync(IPAddress.Any, ServerPort);
             AddressLabel.Text = string.Join(
                 Environment.NewLine,

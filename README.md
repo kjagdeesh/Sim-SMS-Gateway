@@ -1,6 +1,6 @@
-# SIM Relay
+# Sim SMS Gateway
 
-SIM Relay is a self-hosted Android SMS gateway. The Android app exposes a small local HTTP API and submits SMS messages through the phone's default SIM using Android's `SmsManager`. It does not use a cloud SMS service.
+Sim SMS Gateway is a self-hosted Android SMS gateway. The Android app exposes a small local HTTP API and submits SMS messages through the phone's default SIM using Android's `SmsManager`. It does not use a cloud SMS service.
 
 ## Requirements
 
@@ -19,7 +19,7 @@ dotnet build .\build\sim-sms-gateway\SimSmsGateway\SimSmsGateway.csproj -t:Insta
 
 Open `build/sim-sms-gateway/SimSmsGateway.sln` in Visual Studio to work with the Android app, shared core library, and offline test harness together.
 
-Open SIM Relay on the phone and tap **Start server**. Grant SMS permission when prompted. Keep the app open while using the gateway. The app shows localhost and available Wi-Fi addresses, plus a generated API key.
+Open Sim SMS Gateway on the phone and tap **Start server**. Grant SMS permission when prompted. Keep the app open while using the gateway. The app shows localhost and available Wi-Fi addresses, plus a generated API key.
 
 ## Run the API playground
 
@@ -48,6 +48,12 @@ You can also open `web/index.html` with VS Code Live Server. Its CSS, JavaScript
 
 The destination must be an E.164 number. A `202 Accepted` response means Android accepted the request for SMS submission; carrier delivery is not confirmed.
 
+`POST /api/v1/messages/bulk` sends one message to up to 100 unique recipients (`{"recipients": ["+14155550123", ...], "message": "..."}`) and returns per-recipient `success`/`failed` results.
+
+`GET /api/v1/messages?status=&limit=&offset=` returns the stored history, and `GET /api/v1/stats` returns total/success/failed counts. Every attempted send is stored in a SQLite file (`messages.db`) in the app's private storage.
+
+The website has a side menu with Home, Dashboard (history and totals), Send Messages (single and bulk), API Documentation (per-endpoint docs, code examples and live try-it), and Developer & Project. An OpenAPI spec is at `web/openapi.json`.
+
 ## Safety and limitations
 
 - SMS permission is required. Messages use the phone's default SMS subscription and carrier plan; charges may apply.
@@ -55,7 +61,7 @@ The destination must be an E.164 number. A `202 Accepted` response means Android
 - The browser playground does not save the server URL or API key.
 - The first version runs while the app stays open; stopping the server or closing the app disables the API.
 - Android app distribution stores may restrict SMS permissions. Install only on devices and accounts you are authorized to use.
-- Delivery reports, scheduled sends, bulk messaging, and cloud providers are intentionally out of scope.
+- Delivery reports, scheduled sends, and cloud providers are intentionally out of scope.
 
 ## Offline API tests
 

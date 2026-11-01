@@ -1,0 +1,28 @@
+// [ISO 3166 alpha-2, name, dial code]
+const COUNTRIES = [
+  ["IN", "India", "91"], ["US", "United States", "1"], ["CA", "Canada", "1"], ["GB", "United Kingdom", "44"],
+  ["AU", "Australia", "61"], ["AE", "United Arab Emirates", "971"], ["SA", "Saudi Arabia", "966"],
+  ["SG", "Singapore", "65"], ["MY", "Malaysia", "60"], ["ID", "Indonesia", "62"], ["PH", "Philippines", "63"],
+  ["TH", "Thailand", "66"], ["VN", "Vietnam", "84"], ["PK", "Pakistan", "92"], ["BD", "Bangladesh", "880"],
+  ["LK", "Sri Lanka", "94"], ["NP", "Nepal", "977"], ["BT", "Bhutan", "975"], ["MV", "Maldives", "960"],
+  ["AF", "Afghanistan", "93"], ["IR", "Iran", "98"], ["IQ", "Iraq", "964"], ["IL", "Israel", "972"],
+  ["TR", "Türkiye", "90"], ["QA", "Qatar", "974"], ["KW", "Kuwait", "965"], ["OM", "Oman", "968"],
+  ["BH", "Bahrain", "973"], ["JO", "Jordan", "962"], ["LB", "Lebanon", "961"], ["EG", "Egypt", "20"],
+  ["ZA", "South Africa", "27"], ["NG", "Nigeria", "234"], ["KE", "Kenya", "254"], ["GH", "Ghana", "233"],
+  ["ET", "Ethiopia", "251"], ["TZ", "Tanzania", "255"], ["UG", "Uganda", "256"], ["MA", "Morocco", "212"],
+  ["DZ", "Algeria", "213"], ["TN", "Tunisia", "216"], ["MU", "Mauritius", "230"],
+  ["CN", "China", "86"], ["HK", "Hong Kong", "852"], ["TW", "Taiwan", "886"], ["JP", "Japan", "81"],
+  ["KR", "South Korea", "82"], ["MM", "Myanmar", "95"], ["KH", "Cambodia", "855"], ["NZ", "New Zealand", "64"],
+  ["DE", "Germany", "49"], ["FR", "France", "33"], ["IT", "Italy", "39"], ["ES", "Spain", "34"],
+  ["PT", "Portugal", "351"], ["NL", "Netherlands", "31"], ["BE", "Belgium", "32"], ["CH", "Switzerland", "41"],
+  ["AT", "Austria", "43"], ["SE", "Sweden", "46"], ["NO", "Norway", "47"], ["DK", "Denmark", "45"],
+  ["FI", "Finland", "358"], ["IE", "Ireland", "353"], ["PL", "Poland", "48"], ["CZ", "Czechia", "420"],
+  ["GR", "Greece", "30"], ["RO", "Romania", "40"], ["HU", "Hungary", "36"], ["UA", "Ukraine", "380"],
+  ["RU", "Russia", "7"], ["KZ", "Kazakhstan", "7"], ["MX", "Mexico", "52"], ["BR", "Brazil", "55"],
+  ["AR", "Argentina", "54"], ["CL", "Chile", "56"], ["CO", "Colombia", "57"], ["PE", "Peru", "51"],
+  ["VE", "Venezuela", "58"], ["CR", "Costa Rica", "506"], ["PA", "Panama", "507"], ["JM", "Jamaica", "1876"]
+];
+
+function countryFlag(iso) {
+  return String.fromCodePoint(...[...iso].map((c) => 127397 + c.charCodeAt(0)));
+}
