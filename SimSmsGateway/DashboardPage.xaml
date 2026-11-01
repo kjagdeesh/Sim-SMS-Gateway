@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="SimSmsGateway.DashboardPage"
              Title="Dashboard">
-    <ScrollView>
+    <ScrollView VerticalScrollBarVisibility="Never">
         <VerticalStackLayout Padding="20,28,20,28" Spacing="18">
 
             <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="14">

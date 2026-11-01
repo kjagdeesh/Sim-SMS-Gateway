@@ -60,7 +60,7 @@
                         </VerticalStackLayout>
                     </Grid>
                     <Border StyleClass="Inset">
-                        <Label x:Name="AddressLabel" StyleClass="Mono" Text="Start the server to see its address" />
+                        <VerticalStackLayout x:Name="AddressListLayout" Spacing="8" />
                     </Border>
                 </VerticalStackLayout>
             </Border>
@@ -93,8 +93,26 @@
                             <Label StyleClass="Muted" Text="Run this from a computer on the same Wi-Fi." />
                         </VerticalStackLayout>
                     </Grid>
-                    <Border StyleClass="Inset">
-                        <Label x:Name="SampleLabel" StyleClass="Mono" FontSize="11" />
+                    <Border Padding="0" BackgroundColor="#0B1117" Stroke="#263442" StrokeThickness="1"
+                            StrokeShape="RoundRectangle 14">
+                        <VerticalStackLayout Spacing="0">
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10" Padding="12,9" BackgroundColor="#131B24">
+                                <HorizontalStackLayout Spacing="5" VerticalOptions="Center">
+                                    <Border WidthRequest="9" HeightRequest="9" BackgroundColor="#FF5F57"
+                                            StrokeThickness="0" StrokeShape="RoundRectangle 5" />
+                                    <Border WidthRequest="9" HeightRequest="9" BackgroundColor="#FEBC2E"
+                                            StrokeThickness="0" StrokeShape="RoundRectangle 5" />
+                                    <Border WidthRequest="9" HeightRequest="9" BackgroundColor="#28C840"
+                                            StrokeThickness="0" StrokeShape="RoundRectangle 5" />
+                                </HorizontalStackLayout>
+                                <Label Grid.Column="1" Text="Terminal  ·  curl example" FontSize="11"
+                                       TextColor="#9AA7B4" VerticalOptions="Center" />
+                            </Grid>
+                            <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Always" HeightRequest="112">
+                                <Label x:Name="SampleLabel" Margin="12,10" FontFamily="monospace" FontSize="12"
+                                       LineBreakMode="NoWrap" TextColor="#C9D1D9" />
+                            </ScrollView>
+                        </VerticalStackLayout>
                     </Border>
                     <Button StyleClass="Secondary" Text="Copy sample command" Clicked="OnCopySampleClicked" />
                 </VerticalStackLayout>
