@@ -256,10 +256,10 @@ window.addEventListener("hashchange", showRoute);
 
 // ---------- Countries & numbers ----------
 const countrySelect = $("#country");
-for (const [iso, name] of COUNTRIES) {
+for (const [iso, name, dial] of COUNTRIES) {
     countrySelect.append(h("option", {
         value: iso,
-        text: `${countryFlag(iso)}  ${name}`
+        text: `${countryFlag(iso)}  ${name} (+${dial})`
     }));
 }
 const savedIso = localStorage.getItem("simsms.country");
@@ -294,8 +294,9 @@ function prettyNumber(number) {
 function updateDialPrefix() {
     const [iso, name] = COUNTRIES.find(([countryIso]) => countryIso === countrySelect.value);
     const flag = $("#dial-prefix");
-    flag.textContent = countryFlag(iso);
-    flag.setAttribute("aria-label", `${name} flag`);
+    const dial = selectedDial();
+    flag.textContent = `${countryFlag(iso)} +${dial}`;
+    flag.setAttribute("aria-label", `${name} country code +${dial}`);
     flag.title = name;
     localStorage.setItem("simsms.country", countrySelect.value);
     updateSinglePreview();
