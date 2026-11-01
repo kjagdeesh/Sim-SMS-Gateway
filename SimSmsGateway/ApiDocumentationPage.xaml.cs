@@ -1,3 +1,6 @@
+using System.Text.Json;
+using System.Text.RegularExpressions;
+
 namespace SimSmsGateway;
 
 public partial class ApiDocumentationPage : ContentPage
@@ -67,19 +70,204 @@ public partial class ApiDocumentationPage : ContentPage
 
         if (endpoint.Body is not null)
         {
-            stack.Add(new Border { StyleClass = ["Inset"], Content = new Label { StyleClass = ["Mono"], FontSize = 11, Text = endpoint.Body } });
+            if (endpoint.Body.StartsWith('{') || endpoint.Body.StartsWith('['))
+            {
+                var json = PrettyPrintJson(endpoint.Body);
+                stack.Add(BuildCodeWindow("JSON example", json, FormatJson(json)));
+            }
+            else
+            {
+                stack.Add(BuildCodeWindow("Query parameters", endpoint.Body, FormatPlain(endpoint.Body)));
+            }
         }
 
-        var copy = new Button { StyleClass = ["Secondary"], Text = "Copy cURL example", HeightRequest = 42 };
-        copy.Clicked += async (_, _) =>
-        {
-            await Clipboard.Default.SetTextAsync(endpoint.Curl);
-            _ = PopupDialog.ShowAsync(this, $"{endpoint.Title} example copied", "Replace BASE_URL and YOUR_API_KEY before you run it.", PopupKind.Success);
-        };
-        stack.Add(copy);
+        stack.Add(BuildCodeWindow("cURL example", endpoint.Curl, FormatCurl(endpoint.Curl)));
 
         return new Border { StyleClass = ["Card"], Content = stack };
     }
+
+    private Border BuildCodeWindow(string title, string clipboardText, FormattedString formattedText)
+    {
+        var copy = new Button
+        {
+            StyleClass = ["Secondary"],
+            Text = "Copy",
+            FontSize = 11,
+            HeightRequest = 34,
+            Padding = new Thickness(12, 0)
+        };
+        copy.Clicked += async (_, _) =>
+        {
+            await Clipboard.Default.SetTextAsync(clipboardText);
+            await PopupDialog.ShowAsync(this, $"{title} copied", "The full example is ready to paste.", PopupKind.Success);
+        };
+
+        var header = new Grid
+        {
+            ColumnDefinitions = [new ColumnDefinition(GridLength.Auto), new ColumnDefinition(GridLength.Star), new ColumnDefinition(GridLength.Auto)],
+            ColumnSpacing = 10,
+            Padding = new Thickness(12, 8),
+            BackgroundColor = Color.FromArgb("#131B24")
+        };
+        var lights = new HorizontalStackLayout { Spacing = 5, VerticalOptions = LayoutOptions.Center };
+        lights.Add(BuildWindowLight("#FF5F57"));
+        lights.Add(BuildWindowLight("#FEBC2E"));
+        lights.Add(BuildWindowLight("#28C840"));
+        header.Add(lights, 0, 0);
+        header.Add(new Label
+        {
+            Text = title,
+            FontSize = 11,
+            TextColor = Color.FromArgb("#9AA7B4"),
+            VerticalOptions = LayoutOptions.Center
+        }, 1, 0);
+        header.Add(copy, 2, 0);
+
+        var code = new Label
+        {
+            FormattedText = formattedText,
+            FontFamily = "monospace",
+            FontSize = 12,
+            LineBreakMode = LineBreakMode.WordWrap,
+            HorizontalOptions = LayoutOptions.Fill
+        };
+        var contents = new VerticalStackLayout
+        {
+            Spacing = 0,
+            Children =
+            {
+                header,
+                new VerticalStackLayout
+                {
+                    Padding = new Thickness(12, 10),
+                    Children = { code }
+                }
+            }
+        };
+
+        return new Border
+        {
+            Padding = 0,
+            BackgroundColor = Color.FromArgb("#0B1117"),
+            Stroke = Color.FromArgb("#263442"),
+            StrokeThickness = 1,
+            StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 14 },
+            Content = contents
+        };
+    }
+
+    private static Border BuildWindowLight(string color) => new()
+    {
+        WidthRequest = 9,
+        HeightRequest = 9,
+        BackgroundColor = Color.FromArgb(color),
+        StrokeThickness = 0,
+        StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 5 }
+    };
+
+    private static string PrettyPrintJson(string json)
+    {
+        using var document = JsonDocument.Parse(json);
+        return JsonSerializer.Serialize(document.RootElement, new JsonSerializerOptions { WriteIndented = true });
+    }
+
+    private static FormattedString FormatPlain(string text)
+    {
+        var formatted = new FormattedString();
+        formatted.Spans.Add(new Span { Text = text, TextColor = Color.FromArgb("#A5D6FF") });
+        return formatted;
+    }
+
+    private static FormattedString FormatCurl(string command)
+    {
+        var formatted = new FormattedString();
+        var tokens = Regex.Matches(command, @"\s+|""[^""]*""|'[^']*'|\S+");
+        foreach (Match token in tokens)
+        {
+            var value = token.Value;
+            var color = string.IsNullOrWhiteSpace(value)
+                ? "#8B949E"
+                : value == "curl"
+                    ? "#7EE787"
+                    : value.StartsWith("-", StringComparison.Ordinal)
+                        ? "#79C0FF"
+                        : value.Contains("BASE_URL", StringComparison.OrdinalIgnoreCase) || value.StartsWith("http", StringComparison.OrdinalIgnoreCase)
+                            ? "#A5D6FF"
+                            : value.StartsWith('\'') || value.StartsWith('"')
+                                ? "#D2A8FF"
+                                : "#C9D1D9";
+            formatted.Spans.Add(new Span { Text = value, TextColor = Color.FromArgb(color) });
+        }
+
+        return formatted;
+    }
+
+    private static FormattedString FormatJson(string json)
+    {
+        var formatted = new FormattedString();
+        var position = 0;
+        while (position < json.Length)
+        {
+            var current = json[position];
+            if (current == '"')
+            {
+                var end = position + 1;
+                while (end < json.Length)
+                {
+                    if (json[end] == '\\')
+                    {
+                        end += 2;
+                    }
+                    else if (json[end++] == '"')
+                    {
+                        break;
+                    }
+                }
+
+                var next = end;
+                while (next < json.Length && char.IsWhiteSpace(json[next]))
+                {
+                    next++;
+                }
+
+                var color = next < json.Length && json[next] == ':' ? "#D2A8FF" : "#A5D6FF";
+                AddJsonSpan(formatted, json[position..Math.Min(end, json.Length)], color);
+                position = Math.Min(end, json.Length);
+            }
+            else if (current is '{' or '}' or '[' or ']' or ',' or ':')
+            {
+                AddJsonSpan(formatted, current.ToString(), "#8B949E");
+                position++;
+            }
+            else if (char.IsWhiteSpace(current))
+            {
+                var end = position + 1;
+                while (end < json.Length && char.IsWhiteSpace(json[end]))
+                {
+                    end++;
+                }
+
+                AddJsonSpan(formatted, json[position..end], "#8B949E");
+                position = end;
+            }
+            else
+            {
+                var end = position + 1;
+                while (end < json.Length && !char.IsWhiteSpace(json[end]) && json[end] is not ('{' or '}' or '[' or ']' or ',' or ':' or '"'))
+                {
+                    end++;
+                }
+
+                AddJsonSpan(formatted, json[position..end], "#79C0FF");
+                position = end;
+            }
+        }
+
+        return formatted;
+    }
+
+    private static void AddJsonSpan(FormattedString formatted, string text, string color) =>
+        formatted.Spans.Add(new Span { Text = text, TextColor = Color.FromArgb(color) });
 
     private async void OnOpenSpecClicked(object? sender, EventArgs e) =>
         await PopupDialog.OpenLinkAsync(this, "https://github.com/kjagdeesh/Sim-SMS-Gateway/blob/main/web/openapi.json");

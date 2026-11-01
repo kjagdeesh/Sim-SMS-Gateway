@@ -108,10 +108,8 @@
                                 <Label Grid.Column="1" Text="Terminal  ·  curl example" FontSize="11"
                                        TextColor="#9AA7B4" VerticalOptions="Center" />
                             </Grid>
-                            <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Always" HeightRequest="112">
-                                <Label x:Name="SampleLabel" Margin="12,10" FontFamily="monospace" FontSize="12"
-                                       LineBreakMode="NoWrap" TextColor="#C9D1D9" />
-                            </ScrollView>
+                            <Label x:Name="SampleLabel" Margin="12,10" Padding="10,10,10,20" FontFamily="monospace" FontSize="12"
+                                   HorizontalOptions="Fill" LineBreakMode="WordWrap" TextColor="#C9D1D9" />
                         </VerticalStackLayout>
                     </Border>
                     <Button StyleClass="Secondary" Text="Copy sample command" Clicked="OnCopySampleClicked" />
