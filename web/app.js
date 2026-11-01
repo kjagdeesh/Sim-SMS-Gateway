@@ -1277,7 +1277,7 @@ function renderDocs() {
                 h("span", {}, item.title, h("small", {
                     text: item.subtitle
                 })))
-        ]));
+        ].filter(Boolean)));
 
     const endpoint = ENDPOINTS.find((candidate) => candidate.id === docsSelected);
     $("#docs-content").replaceChildren(...(endpoint ? renderEndpoint(endpoint) : renderStart()));
