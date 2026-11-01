@@ -53,9 +53,9 @@ public partial class AboutAppPage : ContentPage
         if (repo is not null)
         {
             DescriptionLabel.Text = string.IsNullOrWhiteSpace(repo.Description) ? FallbackDescription : repo.Description;
-            StarsLabel.Text = repo.Stars.ToString(CultureInfo.CurrentCulture);
-            ForksLabel.Text = repo.Forks.ToString(CultureInfo.CurrentCulture);
-            LanguageLabel.Text = repo.Language ?? "C#";
+            //StarsLabel.Text = repo.Stars.ToString(CultureInfo.CurrentCulture);
+            //ForksLabel.Text = repo.Forks.ToString(CultureInfo.CurrentCulture);
+            //LanguageLabel.Text = repo.Language ?? "C#";
             if (repo.PushedAt is { } pushed)
             {
                 UpdatedLabel.Text = $"Last updated {pushed.ToLocalTime().ToString("d MMM yyyy", CultureInfo.CurrentCulture)}";
