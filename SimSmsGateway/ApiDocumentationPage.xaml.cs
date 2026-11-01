@@ -7,6 +7,10 @@ public partial class ApiDocumentationPage : ContentPage
 {
     private sealed record Endpoint(string Method, string Path, string Title, string Summary, string? Auth, string? Body, string Curl);
 
+    private static readonly Regex SourceCodeTokenPattern = new(
+        @"(?<string>""(?:\\.|[^""\\])*""|'(?:\\.|[^'\\])*'|`(?:\\.|[^`\\])*`)|(?<comment>//.*|#.*)|(?<keyword>\b(?:const|let|await|async|if|throw|new|import|from|with|as|try|except|print|True|False|None|method|headers|body)\b)|(?<number>\b\d+\b)|(?<punctuation>[{}()\[\],.:])",
+        RegexOptions.Compiled);
+
     private static readonly Endpoint[] Items =
     [
         new("GET", "/health", "Health check", "Confirms the gateway is responding. No API key required.", null, "{ \"status\": \"online\" }",
@@ -67,13 +71,16 @@ public partial class ApiDocumentationPage : ContentPage
         stack.Add(new Label { StyleClass = ["Heading"], FontSize = 16, Text = endpoint.Title });
         stack.Add(new Label { StyleClass = ["Body"], Text = endpoint.Summary });
         stack.Add(new Label { StyleClass = ["Muted"], Text = endpoint.Auth is null ? "No API key needed" : "Requires API key" });
+        stack.Add(new Label { StyleClass = ["Heading"], FontSize = 14, Text = "Request details" });
+        stack.Add(new Label { StyleClass = ["Body"], Text = GetRequestDetails(endpoint) });
 
         if (endpoint.Body is not null)
         {
             if (endpoint.Body.StartsWith('{') || endpoint.Body.StartsWith('['))
             {
                 var json = PrettyPrintJson(endpoint.Body);
-                stack.Add(BuildCodeWindow("JSON example", json, FormatJson(json)));
+                var jsonTitle = endpoint.Method == "POST" ? "JSON request body" : "JSON response example";
+                stack.Add(BuildCodeWindow(jsonTitle, json, FormatJson(json)));
             }
             else
             {
@@ -82,9 +89,209 @@ public partial class ApiDocumentationPage : ContentPage
         }
 
         stack.Add(BuildCodeWindow("cURL example", endpoint.Curl, FormatCurl(endpoint.Curl)));
+        var javaScript = GetJavaScriptExample(endpoint);
+        stack.Add(BuildCodeWindow("JavaScript example", javaScript, FormatSourceCode(javaScript)));
+        var python = GetPythonExample(endpoint);
+        stack.Add(BuildCodeWindow("Python example", python, FormatSourceCode(python)));
 
         return new Border { StyleClass = ["Card"], Content = stack };
     }
+
+    private static string GetRequestDetails(Endpoint endpoint) => endpoint.Path switch
+    {
+        "/health" =>
+            "Method: GET\nURL: {BASE_URL}/health\nHeaders: None\nRequest body: None\nSuccess: HTTP 200 returns the online status.",
+        "/api/v1/messages" when endpoint.Method == "POST" =>
+            "Method: POST\nURL: {BASE_URL}/api/v1/messages\nHeaders: Authorization: Bearer YOUR_API_KEY; Content-Type: application/json\nRequest JSON: to is an E.164 number (+ followed by 8-15 digits); message is required and limited to 1600 characters.\nSuccess: HTTP 202 means Android accepted the request, not that the carrier delivered it. Invalid input returns 400, an invalid key 401, and a SIM send failure 503.",
+        "/api/v1/messages/bulk" =>
+            "Method: POST\nURL: {BASE_URL}/api/v1/messages/bulk\nHeaders: Authorization: Bearer YOUR_API_KEY; Content-Type: application/json\nRequest JSON: recipients must contain 1-100 unique E.164 numbers; message is required and limited to 1600 characters.\nSuccess: HTTP 200 returns batchId, total, success, failed, and a result for each recipient. Invalid input returns 400.",
+        "/api/v1/messages" =>
+            "Method: GET\nURL: {BASE_URL}/api/v1/messages\nHeaders: Authorization: Bearer YOUR_API_KEY\nQuery parameters: status is optional (success or failed); limit is optional (1-200, default 50); offset is optional (0 or greater, default 0).\nRequest body: None. Success returns items, limit, and offset; invalid query values return 400.",
+        "/api/v1/stats" =>
+            "Method: GET\nURL: {BASE_URL}/api/v1/stats\nHeaders: Authorization: Bearer YOUR_API_KEY\nRequest body: None\nSuccess: HTTP 200 returns total, success, and failed message counts. An invalid key returns 401.",
+        _ => throw new InvalidOperationException($"No request details are defined for {endpoint.Method} {endpoint.Path}.")
+    };
+
+    private static string GetJavaScriptExample(Endpoint endpoint) => endpoint.Path switch
+    {
+        "/health" => """
+            const BASE_URL = "http://PHONE_IP:8765";
+
+            const response = await fetch(`${BASE_URL}/health`);
+            const data = await response.json();
+            if (!response.ok) {
+              throw new Error(`HTTP ${response.status}: ${JSON.stringify(data)}`);
+            }
+            console.log(data);
+            """,
+        "/api/v1/messages" when endpoint.Method == "POST" => """
+            const BASE_URL = "http://PHONE_IP:8765";
+            const API_KEY = "YOUR_API_KEY";
+
+            const response = await fetch(`${BASE_URL}/api/v1/messages`, {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${API_KEY}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                to: "+919876543210",
+                message: "Hello",
+              }),
+            });
+            const data = await response.json();
+            if (!response.ok) {
+              throw new Error(`HTTP ${response.status}: ${JSON.stringify(data)}`);
+            }
+            console.log(data);
+            """,
+        "/api/v1/messages/bulk" => """
+            const BASE_URL = "http://PHONE_IP:8765";
+            const API_KEY = "YOUR_API_KEY";
+
+            const response = await fetch(`${BASE_URL}/api/v1/messages/bulk`, {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${API_KEY}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                recipients: ["+919876543210", "+14155550123"],
+                message: "Hello",
+              }),
+            });
+            const data = await response.json();
+            if (!response.ok) {
+              throw new Error(`HTTP ${response.status}: ${JSON.stringify(data)}`);
+            }
+            console.log(data);
+            """,
+        "/api/v1/messages" => """
+            const BASE_URL = "http://PHONE_IP:8765";
+            const API_KEY = "YOUR_API_KEY";
+            const query = new URLSearchParams({
+              status: "failed",
+              limit: "25",
+              offset: "0",
+            });
+
+            const response = await fetch(
+              `${BASE_URL}/api/v1/messages?${query}`,
+              { headers: { Authorization: `Bearer ${API_KEY}` } },
+            );
+            const data = await response.json();
+            if (!response.ok) {
+              throw new Error(`HTTP ${response.status}: ${JSON.stringify(data)}`);
+            }
+            console.log(data);
+            """,
+        "/api/v1/stats" => """
+            const BASE_URL = "http://PHONE_IP:8765";
+            const API_KEY = "YOUR_API_KEY";
+
+            const response = await fetch(`${BASE_URL}/api/v1/stats`, {
+              headers: { Authorization: `Bearer ${API_KEY}` },
+            });
+            const data = await response.json();
+            if (!response.ok) {
+              throw new Error(`HTTP ${response.status}: ${JSON.stringify(data)}`);
+            }
+            console.log(data);
+            """,
+        _ => throw new InvalidOperationException($"No JavaScript example is defined for {endpoint.Method} {endpoint.Path}.")
+    };
+
+    private static string GetPythonExample(Endpoint endpoint) => endpoint.Path switch
+    {
+        "/health" => """
+            import json
+            from urllib.request import urlopen
+
+            BASE_URL = "http://PHONE_IP:8765"
+
+            with urlopen(f"{BASE_URL}/health") as response:
+                data = json.load(response)
+                print(response.status, data)
+            """,
+        "/api/v1/messages" when endpoint.Method == "POST" => """
+            import json
+            from urllib.error import HTTPError
+            from urllib.request import Request, urlopen
+
+            BASE_URL = "http://PHONE_IP:8765"
+            API_KEY = "YOUR_API_KEY"
+            payload = {"to": "+919876543210", "message": "Hello"}
+            request = Request(
+                f"{BASE_URL}/api/v1/messages",
+                data=json.dumps(payload).encode("utf-8"),
+                headers={
+                    "Authorization": f"Bearer {API_KEY}",
+                    "Content-Type": "application/json",
+                },
+                method="POST",
+            )
+            try:
+                with urlopen(request) as response:
+                    print(response.status, json.load(response))
+            except HTTPError as error:
+                print(error.code, json.loads(error.read().decode("utf-8")))
+            """,
+        "/api/v1/messages/bulk" => """
+            import json
+            from urllib.error import HTTPError
+            from urllib.request import Request, urlopen
+
+            BASE_URL = "http://PHONE_IP:8765"
+            API_KEY = "YOUR_API_KEY"
+            payload = {
+                "recipients": ["+919876543210", "+14155550123"],
+                "message": "Hello",
+            }
+            request = Request(
+                f"{BASE_URL}/api/v1/messages/bulk",
+                data=json.dumps(payload).encode("utf-8"),
+                headers={
+                    "Authorization": f"Bearer {API_KEY}",
+                    "Content-Type": "application/json",
+                },
+                method="POST",
+            )
+            try:
+                with urlopen(request) as response:
+                    print(response.status, json.load(response))
+            except HTTPError as error:
+                print(error.code, json.loads(error.read().decode("utf-8")))
+            """,
+        "/api/v1/messages" => """
+            import json
+            from urllib.parse import urlencode
+            from urllib.request import Request, urlopen
+
+            BASE_URL = "http://PHONE_IP:8765"
+            API_KEY = "YOUR_API_KEY"
+            query = urlencode({"status": "failed", "limit": 25, "offset": 0})
+            request = Request(
+                f"{BASE_URL}/api/v1/messages?{query}",
+                headers={"Authorization": f"Bearer {API_KEY}"},
+            )
+            with urlopen(request) as response:
+                print(response.status, json.load(response))
+            """,
+        "/api/v1/stats" => """
+            import json
+            from urllib.request import Request, urlopen
+
+            BASE_URL = "http://PHONE_IP:8765"
+            API_KEY = "YOUR_API_KEY"
+            request = Request(
+                f"{BASE_URL}/api/v1/stats",
+                headers={"Authorization": f"Bearer {API_KEY}"},
+            )
+            with urlopen(request) as response:
+                print(response.status, json.load(response))
+            """,
+        _ => throw new InvalidOperationException($"No Python example is defined for {endpoint.Method} {endpoint.Path}.")
+    };
 
     private Border BuildCodeWindow(string title, string clipboardText, FormattedString formattedText)
     {
@@ -197,6 +404,42 @@ public partial class ApiDocumentationPage : ContentPage
                                 ? "#D2A8FF"
                                 : "#C9D1D9";
             formatted.Spans.Add(new Span { Text = value, TextColor = Color.FromArgb(color) });
+        }
+
+        return formatted;
+    }
+
+    private static FormattedString FormatSourceCode(string code)
+    {
+        var formatted = new FormattedString();
+        var position = 0;
+        foreach (Match token in SourceCodeTokenPattern.Matches(code))
+        {
+            if (token.Index > position)
+            {
+                formatted.Spans.Add(new Span
+                {
+                    Text = code[position..token.Index],
+                    TextColor = Color.FromArgb("#C9D1D9")
+                });
+            }
+
+            var color = token.Groups["string"].Success
+                ? "#A5D6FF"
+                : token.Groups["comment"].Success
+                    ? "#8B949E"
+                    : token.Groups["keyword"].Success
+                        ? "#FF7B72"
+                        : token.Groups["number"].Success
+                            ? "#79C0FF"
+                            : "#8B949E";
+            formatted.Spans.Add(new Span { Text = token.Value, TextColor = Color.FromArgb(color) });
+            position = token.Index + token.Length;
+        }
+
+        if (position < code.Length)
+        {
+            formatted.Spans.Add(new Span { Text = code[position..], TextColor = Color.FromArgb("#C9D1D9") });
         }
 
         return formatted;
