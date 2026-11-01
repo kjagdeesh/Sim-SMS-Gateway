@@ -8,6 +8,7 @@ public partial class SettingsPage : ContentPage
     public SettingsPage()
     {
         InitializeComponent();
+        PopupDialog.Attach(this);
         VersionLabel.Text = AppInfo.Current.VersionString;
         PortLabel.Text = GatewayHost.ServerPort.ToString(CultureInfo.InvariantCulture);
         HighlightTheme(Preferences.Default.Get(App.ThemePreferenceKey, "system"));
@@ -34,6 +35,8 @@ public partial class SettingsPage : ContentPage
         {
             App.ApplyTheme(theme);
             HighlightTheme(theme);
+            var name = theme switch { "light" => "Light theme on", "dark" => "Dark theme on", _ => "Following system theme" };
+            _ = PopupDialog.ShowAsync(this, name, "Your choice is saved for next time.", PopupKind.Success);
         }
     }
 

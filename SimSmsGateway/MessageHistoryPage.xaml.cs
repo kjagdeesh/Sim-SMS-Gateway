@@ -16,6 +16,7 @@ public partial class MessageHistoryPage : ContentPage
     public MessageHistoryPage()
     {
         InitializeComponent();
+        PopupDialog.Attach(this);
         BindingContext = this;
         UpdateFilterButtons();
     }
@@ -67,6 +68,7 @@ public partial class MessageHistoryPage : ContentPage
         catch (SqliteException exception)
         {
             HistoryStatusLabel.Text = $"Could not load message history: {exception.Message}";
+            _ = PopupDialog.ShowAsync(this, "Couldn't load message totals", "The message database is unavailable. Restart the app and try again.", PopupKind.Error);
             return;
         }
 
@@ -97,6 +99,7 @@ public partial class MessageHistoryPage : ContentPage
         catch (SqliteException exception)
         {
             HistoryStatusLabel.Text = $"Could not load message history: {exception.Message}";
+            _ = PopupDialog.ShowAsync(this, "Couldn't load messages", "Try the filter again or restart the app.", PopupKind.Error);
         }
     }
 

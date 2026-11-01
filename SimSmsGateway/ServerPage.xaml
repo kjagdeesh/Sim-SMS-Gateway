@@ -26,10 +26,6 @@
                 </VerticalStackLayout>
             </Border>
 
-            <Border x:Name="ErrorCard" StyleClass="Warn" IsVisible="False" BackgroundColor="#33F87171">
-                <Label x:Name="ErrorLabel" FontSize="13" TextColor="#B42318" LineBreakMode="WordWrap" />
-            </Border>
-
             <Border StyleClass="Card">
                 <VerticalStackLayout Spacing="12">
                     <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
@@ -83,8 +79,11 @@
             <Border StyleClass="Warn">
                 <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
                     <Label FontFamily="FASolid" FontSize="16" Text="&#xf071;" TextColor="#B7791F" VerticalOptions="Start" />
-                    <Label Grid.Column="1" StyleClass="WarnText"
-                           Text="Messages use the SIM's default SMS subscription and your carrier plan; charges may apply. Keep this app open while the gateway is running." />
+                    <VerticalStackLayout Grid.Column="1" Spacing="3">
+                        <Label StyleClass="WarnText" FontFamily="OpenSansSemibold" FontSize="13" Text="Before you send" />
+                        <Label StyleClass="WarnText"
+                               Text="Messages use the SIM's default SMS plan, so carrier charges may apply. Keep this app open while the gateway is running, and only share your API key with apps you trust." />
+                    </VerticalStackLayout>
                 </Grid>
             </Border>
         </VerticalStackLayout>

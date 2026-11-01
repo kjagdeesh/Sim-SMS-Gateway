@@ -13,6 +13,7 @@ public partial class AboutAppPage : ContentPage
     public AboutAppPage()
     {
         InitializeComponent();
+        PopupDialog.Attach(this);
         VersionLabel.Text = $"Version {AppInfo.Current.VersionString} (build {AppInfo.Current.BuildString})";
         TaglineLabel.Text = "Your phone. Your SIM. Your SMS API.";
         DescriptionLabel.Text = FallbackDescription;
@@ -43,6 +44,7 @@ public partial class AboutAppPage : ContentPage
         {
             SourceLabel.Text = "Offline — showing the built-in description";
             RetryButton.IsVisible = true;
+            _ = PopupDialog.ShowAsync(this, "Couldn't reach GitHub", "Check your internet connection. Showing the built-in description instead.", PopupKind.Warning);
             return;
         }
 
@@ -84,7 +86,7 @@ public partial class AboutAppPage : ContentPage
 
     private async void OnRetryClicked(object? sender, EventArgs e) => await LoadAsync();
 
-    private async void OnOpenRepoClicked(object? sender, EventArgs e) => await Launcher.Default.OpenAsync(RepoUrl);
+    private async void OnOpenRepoClicked(object? sender, EventArgs e) => await PopupDialog.OpenLinkAsync(this, RepoUrl);
 
-    private async void OnOpenIssuesClicked(object? sender, EventArgs e) => await Launcher.Default.OpenAsync($"{RepoUrl}/issues");
+    private async void OnOpenIssuesClicked(object? sender, EventArgs e) => await PopupDialog.OpenLinkAsync(this, $"{RepoUrl}/issues");
 }

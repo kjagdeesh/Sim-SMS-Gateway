@@ -385,7 +385,7 @@
     </Style>
 
     <Style TargetType="Shell" ApplyToDerivedTypes="True">
-        <Setter Property="Shell.BackgroundColor" Value="{AppThemeBinding Light={StaticResource CardLight}, Dark={StaticResource CardDark}}" />
+        <Setter Property="Shell.BackgroundColor" Value="{AppThemeBinding Light={StaticResource BgLight}, Dark={StaticResource BgDark}}" />
         <Setter Property="Shell.ForegroundColor" Value="{AppThemeBinding Light={StaticResource AccentLight}, Dark={StaticResource AccentDark}}" />
         <Setter Property="Shell.TitleColor" Value="{AppThemeBinding Light={StaticResource InkLight}, Dark={StaticResource InkDark}}" />
         <Setter Property="Shell.DisabledColor" Value="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray950}}" />

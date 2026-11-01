@@ -9,6 +9,7 @@ public partial class ServerPage : ContentPage
     public ServerPage()
     {
         InitializeComponent();
+        PopupDialog.Attach(this);
     }
 
     private GatewayHost Gateway => ((App)Application.Current!).Gateway;
@@ -59,28 +60,43 @@ public partial class ServerPage : ContentPage
 
     private async void OnToggleClicked(object? sender, EventArgs e)
     {
-        ErrorCard.IsVisible = false;
         ToggleButton.IsEnabled = false;
         try
         {
             if (Gateway.IsRunning)
             {
                 await Gateway.StopAsync();
+                await PopupDialog.ShowAsync(this, "Server stopped", "Apps can no longer send SMS through this phone.", PopupKind.Info);
                 return;
             }
 
             var permission = await Permissions.RequestAsync<SmsPermission>();
             if (permission != PermissionStatus.Granted)
             {
-                ShowError("SMS permission is required before the gateway can start.");
+                await PopupDialog.ShowAsync(
+                    this,
+                    "SMS permission needed",
+                    "Sim SMS Gateway can't send messages without the SMS permission. Allow it in the app's settings, then try again.",
+                    PopupKind.Error,
+                    "Open app settings",
+                    () =>
+                    {
+                        AppInfo.Current.ShowSettingsUI();
+                        return Task.CompletedTask;
+                    });
                 return;
             }
 
             await Gateway.StartAsync();
+            await PopupDialog.ShowAsync(this, "Server is running", $"Listening on port {GatewayHost.ServerPort}. Keep this app open.", PopupKind.Success);
         }
         catch (SocketException exception)
         {
-            ShowError($"Could not start the local server: {exception.Message}");
+            await PopupDialog.ShowAsync(
+                this,
+                "Couldn't start the server",
+                $"Port {GatewayHost.ServerPort} is unavailable ({exception.Message}). Close other apps using it and try again.",
+                PopupKind.Error);
         }
         finally
         {
@@ -98,18 +114,12 @@ public partial class ServerPage : ContentPage
     private async void OnCopyKeyClicked(object? sender, EventArgs e)
     {
         await Clipboard.Default.SetTextAsync(Gateway.ApiKey);
-        await DisplayAlertAsync("Copied", "The API key is on your clipboard.", "OK");
+        await PopupDialog.ShowAsync(this, "API key copied", "Treat it like a password and share it only with apps you trust.", PopupKind.Success);
     }
 
     private async void OnCopySampleClicked(object? sender, EventArgs e)
     {
         await Clipboard.Default.SetTextAsync(SampleLabel.Text);
-        await DisplayAlertAsync("Copied", "Replace YOUR_API_KEY and the phone number before running it.", "OK");
-    }
-
-    private void ShowError(string message)
-    {
-        ErrorLabel.Text = message;
-        ErrorCard.IsVisible = true;
+        await PopupDialog.ShowAsync(this, "Command copied", "Replace YOUR_API_KEY and the phone number before running it.", PopupKind.Success);
     }
 }

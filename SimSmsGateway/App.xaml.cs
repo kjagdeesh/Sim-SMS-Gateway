@@ -9,6 +9,10 @@ public partial class App : Application
 
 	public GatewayHost Gateway { get; }
 
+	public static event Action? ThemeChanged;
+
+	public static bool IsDark => Current?.RequestedTheme == AppTheme.Dark;
+
 	public SmsMessageStore MessageStore => Gateway.Store;
 
 	public App()
@@ -16,6 +20,7 @@ public partial class App : Application
 		InitializeComponent();
 		Gateway = new GatewayHost(new SmsMessageStore(Path.Combine(FileSystem.AppDataDirectory, "messages.db")));
 		ApplyTheme(Preferences.Default.Get(ThemePreferenceKey, "system"));
+		RequestedThemeChanged += (_, _) => ThemeChanged?.Invoke();
 	}
 
 	public static void ApplyTheme(string theme)
@@ -32,6 +37,7 @@ public partial class App : Application
 			_ => AppTheme.Unspecified
 		};
 		Preferences.Default.Set(ThemePreferenceKey, theme);
+		ThemeChanged?.Invoke();
 	}
 
 	protected override Window CreateWindow(IActivationState? activationState)

@@ -7,6 +7,7 @@ public partial class DeveloperProjectPage : ContentPage
     public DeveloperProjectPage()
     {
         InitializeComponent();
+        PopupDialog.Attach(this);
     }
 
     protected override async void OnAppearing()
@@ -20,6 +21,7 @@ public partial class DeveloperProjectPage : ContentPage
         var user = await GitHubApi.GetUserAsync();
         if (user is null)
         {
+            _ = PopupDialog.ShowAsync(this, "Couldn't load your GitHub profile", "You're offline or GitHub is busy. Showing saved details; links still work.", PopupKind.Warning);
             return;
         }
 
@@ -46,7 +48,7 @@ public partial class DeveloperProjectPage : ContentPage
     {
         if (sender is Button { CommandParameter: string url })
         {
-            await Launcher.Default.OpenAsync(url);
+            await PopupDialog.OpenLinkAsync(this, url);
         }
     }
 
@@ -54,7 +56,7 @@ public partial class DeveloperProjectPage : ContentPage
     {
         if (e.Parameter is string url)
         {
-            await Launcher.Default.OpenAsync(url);
+            await PopupDialog.OpenLinkAsync(this, url);
         }
     }
 }

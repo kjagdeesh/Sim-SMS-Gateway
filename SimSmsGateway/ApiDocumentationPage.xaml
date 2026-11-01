@@ -25,7 +25,13 @@
                     <Label StyleClass="Body" Text="Base URL: the Wi-Fi address on the Server page, for example http://192.168.1.25:8765." />
                     <Label StyleClass="Body" Text="Authentication: send Authorization: Bearer YOUR_API_KEY on every endpoint except /health." />
                     <Label StyleClass="Body" Text="Format: JSON requests use Content-Type: application/json. Numbers must be E.164, like +919876543210." />
-                    <Label StyleClass="WarnText" Text="The gateway uses plain HTTP. Never expose its port to the internet." />
+                    <Border StyleClass="Warn" Padding="12">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                            <Label FontFamily="FASolid" FontSize="14" Text="&#xf071;" TextColor="#B7791F" VerticalOptions="Start" />
+                            <Label Grid.Column="1" StyleClass="WarnText"
+                                   Text="Security: the gateway uses plain HTTP. Use a trusted network and never expose its port to the internet." />
+                        </Grid>
+                    </Border>
                 </VerticalStackLayout>
             </Border>
 

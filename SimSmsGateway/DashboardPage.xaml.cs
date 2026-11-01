@@ -8,6 +8,7 @@ public partial class DashboardPage : ContentPage
     public DashboardPage()
     {
         InitializeComponent();
+        PopupDialog.Attach(this);
     }
 
     private GatewayHost Gateway => ((App)Application.Current!).Gateway;
@@ -43,14 +44,24 @@ public partial class DashboardPage : ContentPage
         catch (SqliteException)
         {
             TotalLabel.Text = SuccessLabel.Text = FailedLabel.Text = "–";
+            _ = PopupDialog.ShowAsync(this, "Couldn't load message totals", "The message database is unavailable. Restart the app and try again.", PopupKind.Error);
         }
     }
 
     private async void OnTileTapped(object? sender, TappedEventArgs e)
     {
-        if (e.Parameter is string route)
+        if (e.Parameter is not string route)
+        {
+            return;
+        }
+
+        try
         {
             await Shell.Current.GoToAsync(route);
+        }
+        catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
+        {
+            await PopupDialog.ShowAsync(this, "Couldn't open that page", "Please try again.", PopupKind.Error);
         }
     }
 }

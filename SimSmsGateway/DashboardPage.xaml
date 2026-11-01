@@ -111,8 +111,11 @@
             <Border StyleClass="Warn">
                 <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
                     <Label FontFamily="FASolid" FontSize="16" Text="&#xf071;" TextColor="#B7791F" VerticalOptions="Start" />
-                    <Label Grid.Column="1" StyleClass="WarnText"
-                           Text="The gateway uses plain HTTP. Keep it on a trusted network and never expose its port publicly. Carrier charges may apply to every SMS." />
+                    <VerticalStackLayout Grid.Column="1" Spacing="3">
+                        <Label StyleClass="WarnText" FontFamily="OpenSansSemibold" FontSize="13" Text="Security reminder" />
+                        <Label StyleClass="WarnText"
+                               Text="The gateway speaks plain HTTP, so use it only on a trusted Wi-Fi network and never expose its port to the internet. Carrier charges may apply to every SMS." />
+                    </VerticalStackLayout>
                 </Grid>
             </Border>
         </VerticalStackLayout>

@@ -32,9 +32,11 @@ public partial class ApiDocumentationPage : ContentPage
         {
             Endpoints.Add(BuildCard(endpoint));
         }
+
+        PopupDialog.Attach(this);
     }
 
-    private static Border BuildCard(Endpoint endpoint)
+    private Border BuildCard(Endpoint endpoint)
     {
         var isPost = endpoint.Method == "POST";
         var badge = new Border
@@ -72,7 +74,7 @@ public partial class ApiDocumentationPage : ContentPage
         copy.Clicked += async (_, _) =>
         {
             await Clipboard.Default.SetTextAsync(endpoint.Curl);
-            await Application.Current!.Windows[0].Page!.DisplayAlertAsync("Copied", "Replace BASE_URL and YOUR_API_KEY before running.", "OK");
+            _ = PopupDialog.ShowAsync(this, $"{endpoint.Title} example copied", "Replace BASE_URL and YOUR_API_KEY before you run it.", PopupKind.Success);
         };
         stack.Add(copy);
 
@@ -80,5 +82,5 @@ public partial class ApiDocumentationPage : ContentPage
     }
 
     private async void OnOpenSpecClicked(object? sender, EventArgs e) =>
-        await Launcher.Default.OpenAsync("https://github.com/kjagdeesh/Sim-SMS-Gateway/blob/main/web/openapi.json");
+        await PopupDialog.OpenLinkAsync(this, "https://github.com/kjagdeesh/Sim-SMS-Gateway/blob/main/web/openapi.json");
 }

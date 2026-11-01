@@ -96,8 +96,11 @@
             <Border StyleClass="Warn">
                 <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
                     <Label FontFamily="FASolid" FontSize="16" Text="&#xf071;" TextColor="#B7791F" VerticalOptions="Start" />
-                    <Label Grid.Column="1" StyleClass="WarnText"
-                           Text="Use SMS responsibly. Only message people who agreed to receive it. The API confirms Android accepted a send request — not carrier delivery." />
+                    <VerticalStackLayout Grid.Column="1" Spacing="3">
+                        <Label StyleClass="WarnText" FontFamily="OpenSansSemibold" FontSize="13" Text="Use SMS responsibly" />
+                        <Label StyleClass="WarnText"
+                               Text="Only message people who agreed to receive it. A successful response means Android accepted the request — carrier delivery isn't confirmed." />
+                    </VerticalStackLayout>
                 </Grid>
             </Border>
         </VerticalStackLayout>
