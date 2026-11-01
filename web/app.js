@@ -795,18 +795,44 @@ function renderDocs() {
 }
 
 // ---------- Developer ----------
+// Pinned on github.com/kjagdeesh (the REST API cannot read pins). Details are refreshed from the API when reachable.
+const PINNED = [
+  { name: "TasklyDev", lang: "C#", icon: "screwdriver-wrench", desc: "Open-source Windows developer toolkit built with C#, WPF and .NET 10: diagnostics, clipboard history, JWT, hashing and regex tools." },
+  { name: "JStitch", lang: "JavaScript", icon: "diagram-project", desc: "JSON analysis tool to visualize, explore and convert JSON into tree views, tables, graphs and C# models." },
+  { name: "PrivacyLens", lang: "C#", icon: "shield-halved", desc: "Open-source Android privacy dashboard built with .NET MAUI showing which apps access sensitive permissions, all processed on-device." },
+  { name: "AIPneumoScan", lang: "C#", icon: "lungs", desc: "Cross-platform .NET MAUI app that detects pneumonia from chest X-rays using an offline ONNX model." }
+];
+
+function renderPinned(details = {}) {
+  $("#pinned-grid").replaceChildren(...PINNED.map((item) => {
+    const live = details[item.name.toLowerCase()];
+    const stars = live?.stargazers_count;
+    return h("a", { class: "pinned-card", href: `https://github.com/kjagdeesh/${item.name}`, target: "_blank", rel: "noopener noreferrer" },
+      h("div", { class: "pinned-top" }, h("span", { class: "pinned-ico" }, icon(item.icon)), h("i", { class: "fa-solid fa-arrow-up-right-from-square pinned-out", "aria-hidden": "true" })),
+      h("h4", { text: item.name }),
+      h("p", { text: live?.description || item.desc }),
+      h("div", { class: "pinned-meta" },
+        h("span", {}, icon("circle"), live?.language || item.lang),
+        stars ? h("span", {}, icon("star"), String(stars)) : null));
+  }));
+}
+
 let developerLoaded = false;
 async function loadDeveloper() {
   if (developerLoaded) return;
   developerLoaded = true;
+  renderPinned();
   try {
+    fetchWithTimeout("https://api.github.com/users/kjagdeesh/repos?per_page=100", {}, 8000)
+      .then((r) => (r.ok ? r.json() : []))
+      .then((repos) => renderPinned(Object.fromEntries(repos.map((repo) => [repo.name.toLowerCase(), repo]))))
+      .catch(() => {});
     const response = await fetchWithTimeout("https://api.github.com/users/kjagdeesh", {}, 8000);
     if (!response.ok) throw new Error("GitHub profile unavailable");
     const profile = await response.json();
     $("#dev-name").textContent = profile.name || profile.login;
     $("#dev-meta").textContent = ["Developer", profile.location, `@${profile.login}`].filter(Boolean).join(" · ");
-    $("#dev-repos").textContent = profile.public_repos;
-    $("#dev-followers").textContent = profile.followers;
+    if (profile.bio) { $("#dev-bio").textContent = profile.bio; $("#dev-bio").hidden = false; }
     const avatar = $("#dev-avatar");
     avatar.addEventListener("load", () => { avatar.hidden = false; $("#dev-avatar-fallback").hidden = true; });
     avatar.src = profile.avatar_url;
