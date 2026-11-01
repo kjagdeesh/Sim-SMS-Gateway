@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="SimSmsGateway.DeveloperProjectPage"
              Title="Developer &amp; Project">
-    <ScrollView>
+    <ScrollView VerticalScrollBarVisibility="Never">
         <VerticalStackLayout Padding="20,28,20,28" Spacing="18">
 
             <Border StyleClass="Hero">

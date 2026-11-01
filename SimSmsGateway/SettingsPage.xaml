@@ -10,7 +10,7 @@
             <Label Grid.Column="1" StyleClass="ShellPageTitle" Text="Settings" />
         </Grid>
     </Shell.TitleView>
-    <ScrollView>
+    <ScrollView VerticalScrollBarVisibility="Never">
         <VerticalStackLayout Padding="20,28,20,28" Spacing="16">
             <Grid ColumnDefinitions="Auto,Auto,*" ColumnSpacing="10" Margin="0,0,0,30">
                 <Button StyleClass="Secondary"
