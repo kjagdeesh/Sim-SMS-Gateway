@@ -12,6 +12,7 @@ public partial class AppShell : Shell
 		Routing.RegisterRoute("settings", typeof(SettingsPage));
 		Routing.RegisterRoute("about", typeof(AboutAppPage));
 
+		Navigated += (_, _) => App.RequestSystemBarsRefresh();
 		CurrentItem = HomeTab;
 	}
 }

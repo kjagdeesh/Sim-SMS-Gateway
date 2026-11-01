@@ -10,8 +10,11 @@ public partial class App : Application
 	public GatewayHost Gateway { get; }
 
 	public static event Action? ThemeChanged;
+	public static event Action? SystemBarsRefreshRequested;
 
 	public static bool IsDark => Current?.RequestedTheme == AppTheme.Dark;
+
+	public static void RequestSystemBarsRefresh() => SystemBarsRefreshRequested?.Invoke();
 
 	public SmsMessageStore MessageStore => Gateway.Store;
 

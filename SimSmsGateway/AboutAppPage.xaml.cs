@@ -89,4 +89,16 @@ public partial class AboutAppPage : ContentPage
     private async void OnOpenRepoClicked(object? sender, EventArgs e) => await PopupDialog.OpenLinkAsync(this, RepoUrl);
 
     private async void OnOpenIssuesClicked(object? sender, EventArgs e) => await PopupDialog.OpenLinkAsync(this, $"{RepoUrl}/issues");
+
+    private async void OnBackClicked(object? sender, EventArgs e)
+    {
+        try
+        {
+            await Shell.Current.GoToAsync("..");
+        }
+        catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
+        {
+            await PopupDialog.ShowAsync(this, "Couldn't go back", "Please try again.", PopupKind.Error);
+        }
+    }
 }

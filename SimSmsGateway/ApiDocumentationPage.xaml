@@ -2,10 +2,34 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="SimSmsGateway.ApiDocumentationPage"
-             Shell.NavBarIsVisible="True"
+             Shell.NavBarIsVisible="False"
              Title="API documentation">
+    <Shell.TitleView>
+        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10" VerticalOptions="Center">
+            <Image Source="simsmsgatewaylogo.svg" WidthRequest="32" HeightRequest="32" VerticalOptions="Center" />
+            <Label Grid.Column="1" StyleClass="ShellPageTitle" Text="API documentation" />
+        </Grid>
+    </Shell.TitleView>
     <ScrollView>
-        <VerticalStackLayout Padding="20,20,20,28" Spacing="16">
+        <VerticalStackLayout Padding="20,28,20,28" Spacing="16">
+            <Grid ColumnDefinitions="Auto,Auto,*" ColumnSpacing="10" Margin="0,0,0,30">
+                <Button StyleClass="Secondary"
+                        WidthRequest="46"
+                        HeightRequest="46"
+                        Padding="0"
+                        Text="&#xf060;"
+                        FontFamily="FASolid"
+                        Clicked="OnBackClicked"
+                        SemanticProperties.Description="Back" />
+                
+                <!--<Border Grid.Column="1" StyleClass="IconBox">
+                    <Label StyleClass="Icon" Text="&#xf1c9;" />
+                </Border>-->
+                
+                <VerticalStackLayout Grid.Column="2" VerticalOptions="Center" Spacing="1">
+                    <Label StyleClass="Title" FontSize="23" Text="API Documentation" />
+                </VerticalStackLayout>
+            </Grid>
 
             <Border StyleClass="Hero">
                 <VerticalStackLayout Spacing="10">

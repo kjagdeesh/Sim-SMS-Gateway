@@ -103,6 +103,18 @@ public partial class MessageHistoryPage : ContentPage
         }
     }
 
+    private async void OnBackClicked(object? sender, EventArgs e)
+    {
+        try
+        {
+            await Shell.Current.GoToAsync("..");
+        }
+        catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
+        {
+            await PopupDialog.ShowAsync(this, "Couldn't go back", "Please try again.", PopupKind.Error);
+        }
+    }
+
     public sealed record MessageHistoryItem(
         string Destination,
         string Message,

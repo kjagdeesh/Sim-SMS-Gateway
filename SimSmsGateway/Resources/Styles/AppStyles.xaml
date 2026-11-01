@@ -50,6 +50,12 @@
         <Setter Property="FontSize" Value="26" />
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource InkLight}, Dark={StaticResource InkDark}}" />
     </Style>
+    <Style TargetType="Label" Class="ShellPageTitle">
+        <Setter Property="FontFamily" Value="OpenSansSemibold" />
+        <Setter Property="FontSize" Value="21" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource InkLight}, Dark={StaticResource InkDark}}" />
+        <Setter Property="VerticalOptions" Value="Center" />
+    </Style>
     <Style TargetType="Label" Class="Heading">
         <Setter Property="FontFamily" Value="OpenSansSemibold" />
         <Setter Property="FontSize" Value="17" />

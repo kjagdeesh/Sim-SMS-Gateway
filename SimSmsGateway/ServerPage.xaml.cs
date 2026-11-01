@@ -111,6 +111,18 @@ public partial class ServerPage : ContentPage
         Render();
     }
 
+    private async void OnBackClicked(object? sender, EventArgs e)
+    {
+        try
+        {
+            await Shell.Current.GoToAsync("..");
+        }
+        catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
+        {
+            await PopupDialog.ShowAsync(this, "Couldn't go back", "Please try again.", PopupKind.Error);
+        }
+    }
+
     private async void OnCopyKeyClicked(object? sender, EventArgs e)
     {
         await Clipboard.Default.SetTextAsync(Gateway.ApiKey);

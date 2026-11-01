@@ -83,4 +83,16 @@ public partial class ApiDocumentationPage : ContentPage
 
     private async void OnOpenSpecClicked(object? sender, EventArgs e) =>
         await PopupDialog.OpenLinkAsync(this, "https://github.com/kjagdeesh/Sim-SMS-Gateway/blob/main/web/openapi.json");
+
+    private async void OnBackClicked(object? sender, EventArgs e)
+    {
+        try
+        {
+            await Shell.Current.GoToAsync("..");
+        }
+        catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
+        {
+            await PopupDialog.ShowAsync(this, "Couldn't go back", "Please try again.", PopupKind.Error);
+        }
+    }
 }

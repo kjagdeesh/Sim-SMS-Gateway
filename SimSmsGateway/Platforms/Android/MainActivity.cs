@@ -12,12 +12,20 @@ public class MainActivity : MauiAppCompatActivity
     {
         base.OnCreate(savedInstanceState);
         App.ThemeChanged += UpdateSystemBars;
+        App.SystemBarsRefreshRequested += UpdateSystemBars;
+        UpdateSystemBars();
+    }
+
+    protected override void OnResume()
+    {
+        base.OnResume();
         UpdateSystemBars();
     }
 
     protected override void OnDestroy()
     {
         App.ThemeChanged -= UpdateSystemBars;
+        App.SystemBarsRefreshRequested -= UpdateSystemBars;
         base.OnDestroy();
     }
 

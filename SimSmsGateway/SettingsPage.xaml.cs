@@ -59,4 +59,16 @@ public partial class SettingsPage : ContentPage
             _ => "Follows your phone's light or dark setting."
         };
     }
+
+    private async void OnBackClicked(object? sender, EventArgs e)
+    {
+        try
+        {
+            await Shell.Current.GoToAsync("..");
+        }
+        catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
+        {
+            await PopupDialog.ShowAsync(this, "Couldn't go back", "Please try again.", PopupKind.Error);
+        }
+    }
 }

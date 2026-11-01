@@ -61,7 +61,7 @@
                     <VerticalStackLayout Spacing="12">
                         <Border StyleClass="IconBox"><Label StyleClass="Icon" Text="&#xf1da;" /></Border>
                         <VerticalStackLayout Spacing="2">
-                            <Label StyleClass="Heading" FontSize="16" Text="Message history" />
+                            <Label StyleClass="Heading" FontSize="16" Text="Message History" />
                             <Label StyleClass="Muted" Text="Every send with its status" />
                         </VerticalStackLayout>
                     </VerticalStackLayout>
@@ -74,7 +74,7 @@
                     <VerticalStackLayout Spacing="12">
                         <Border StyleClass="IconBox"><Label StyleClass="Icon" Text="&#xf1c9;" /></Border>
                         <VerticalStackLayout Spacing="2">
-                            <Label StyleClass="Heading" FontSize="16" Text="API documentation" />
+                            <Label StyleClass="Heading" FontSize="16" Text="API Documentation" />
                             <Label StyleClass="Muted" Text="Endpoints and examples" />
                         </VerticalStackLayout>
                     </VerticalStackLayout>
@@ -100,7 +100,7 @@
                     <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="14">
                         <Border StyleClass="IconBox"><Label StyleClass="Icon" Text="&#xf05a;" /></Border>
                         <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
-                            <Label StyleClass="Heading" FontSize="16" Text="About app" />
+                            <Label StyleClass="Heading" FontSize="16" Text="About App" />
                             <Label StyleClass="Muted" Text="Project description from GitHub" />
                         </VerticalStackLayout>
                         <Label Grid.Column="2" StyleClass="Chevron" />
