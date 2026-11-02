@@ -2,6 +2,11 @@
 
 Sim SMS Gateway is a self-hosted Android SMS gateway. The Android app exposes a small local HTTP API and submits SMS messages through the phone's default SIM using Android's `SmsManager`. It does not use a cloud SMS service.
 
+## Guides
+
+- [App and functionality guide](APP_GUIDE.md) — navigation, setup, sending, history, and troubleshooting.
+- [Technical guide](TECHNICAL_GUIDE.md) — server architecture, API flow, SQLite persistence, and source map.
+
 ## Requirements
 
 - .NET 10 SDK with the Android workload
@@ -35,6 +40,8 @@ You can also open `web/index.html` with VS Code Live Server. Its CSS, JavaScript
 
 ## API
 
+Authenticated requests use an `Authorization: Bearer YOUR_API_KEY` header, except for `GET /health`.
+
 `GET /health` responds with `{"status":"online"}`.
 
 `POST /api/v1/messages` requires `Authorization: Bearer <key>` and an `application/json` body:
@@ -52,13 +59,13 @@ The destination must be an E.164 number. A `202 Accepted` response means Android
 
 `GET /api/v1/messages?status=&limit=&offset=` returns the stored history, and `GET /api/v1/stats` returns total/success/failed counts. Every attempted send is stored in a SQLite file (`messages.db`) in the app's private storage.
 
-The website has a side menu with Home, Dashboard (history and totals), Send Messages (single and bulk), API Documentation (per-endpoint docs, code examples and live try-it), and Developer & Project. The native Android app uses a bottom tab bar (Dashboard, Home, Developer & Project) with matching light/dark themes and Font Awesome icons. An OpenAPI spec is at `web/openapi.json`.
+The website has a side menu with Home, Dashboard (history and totals), Send Messages (single and bulk), API Documentation (per-endpoint docs, code examples and live try-it), and Developer & Project. The native Android app uses a bottom tab bar (Dashboard, Home, Developer) with matching light/dark themes and Font Awesome icons. An OpenAPI spec is at `web/openapi.json`.
 
 ## Safety and limitations
 
 - SMS permission is required. Messages use the phone's default SMS subscription and carrier plan; charges may apply.
-- The server listens on the phone's network interfaces on port `8765`. The bearer key protects the send endpoint, but HTTP does not encrypt traffic. Use a trusted Wi-Fi network and never port-forward or expose this server to the public internet.
-- The browser playground does not save the server URL or API key.
+- The server listens on the phone's network interfaces on port `8765`. API endpoints other than `/health` require a bearer key, but HTTP does not encrypt traffic. Use a trusted Wi-Fi network and never port-forward or expose this server to the public internet.
+- The browser playground saves the server URL in local storage and the API key in session storage for the current tab. Clear browser storage when using a shared computer.
 - The first version runs while the app stays open; stopping the server or closing the app disables the API.
 - Android app distribution stores may restrict SMS permissions. Install only on devices and accounts you are authorized to use.
 - Delivery reports, scheduled sends, and cloud providers are intentionally out of scope.
