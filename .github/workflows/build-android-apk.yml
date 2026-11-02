@@ -1,0 +1,106 @@
+name: Build signed Release APK
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "SimSmsGateway/**"
+      - "SimSmsGateway.Core/**"
+      - "SimSmsGateway.sln"
+      - "web/logo.svg"
+      - ".github/workflows/build-android-apk.yml"
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-apk-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+      - name: Install .NET Android workload
+        run: dotnet workload install maui-android
+      - name: Decode release signing keystore
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          for name in ANDROID_KEYSTORE_BASE64 ANDROID_KEYSTORE_PASSWORD ANDROID_KEY_ALIAS ANDROID_KEY_PASSWORD; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Missing required Actions secret: $name"
+              exit 1
+            fi
+          done
+          printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/simsmsgateway-release.keystore"
+      - name: Publish signed release APK
+        env:
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          dotnet publish SimSmsGateway/SimSmsGateway.csproj \
+            --configuration Release \
+            --framework net10.0-android \
+            -p:AndroidPackageFormat=apk \
+            -p:AndroidKeyStore=true \
+            -p:AndroidSigningKeyStore="$RUNNER_TEMP/simsmsgateway-release.keystore" \
+            -p:AndroidSigningStorePass="$ANDROID_KEYSTORE_PASSWORD" \
+            -p:AndroidSigningKeyAlias="$ANDROID_KEY_ALIAS" \
+            -p:AndroidSigningKeyPass="$ANDROID_KEY_PASSWORD"
+      - name: Prepare release APK artifact
+        shell: bash
+        run: |
+          mkdir -p artifacts
+          apk_path="$(find SimSmsGateway/bin/Release/net10.0-android/publish -type f -name '*-Signed.apk' -print -quit)"
+          if [ -z "$apk_path" ]; then
+            echo "No signed Release APK was produced by dotnet publish."
+            exit 1
+          fi
+          cp "$apk_path" artifacts/SimSmsGateway-release.apk
+      - name: Upload signed Release APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SimSmsGateway-release-apk
+          path: artifacts/SimSmsGateway-release.apk
+          if-no-files-found: error
+          retention-days: 90
+
+  publish-release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download signed Release APK
+        uses: actions/download-artifact@v4
+        with:
+          name: SimSmsGateway-release-apk
+          path: artifacts
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: artifacts/SimSmsGateway-release.apk
