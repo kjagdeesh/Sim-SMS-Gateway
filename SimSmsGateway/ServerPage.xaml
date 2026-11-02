@@ -87,6 +87,44 @@
             <Border StyleClass="Card">
                 <VerticalStackLayout Spacing="12">
                     <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                        <Border StyleClass="IconBox"><Label StyleClass="Icon" Text="&#xf0ac;" /></Border>
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="1">
+                            <Label StyleClass="Heading" Text="Connect the web dashboard" />
+                            <Label StyleClass="Muted" Text="Open the gateway website or its setup and API guides." />
+                        </VerticalStackLayout>
+                    </Grid>
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <Button StyleClass="Primary" Text="Gateway website" Clicked="OnOpenWebsiteClicked"
+                                CommandParameter="https://kjagdeesh.github.io/Sim-SMS-Gateway/" />
+                        <Button Grid.Column="1" StyleClass="Secondary" Text="Documentation" Clicked="OnOpenWebsiteClicked"
+                                CommandParameter="https://kjagdeesh.github.io/Sim-SMS-Gateway/docs/" />
+                    </Grid>
+                    <Border StyleClass="Inset" Padding="12">
+                        <VerticalStackLayout Spacing="8">
+                            <VerticalStackLayout Spacing="2">
+                                <Label StyleClass="Muted" Text="Gateway website URL" />
+                                <Label StyleClass="Mono" LineBreakMode="CharacterWrap"
+                                       Text="https://kjagdeesh.github.io/Sim-SMS-Gateway/" />
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Spacing="2">
+                                <Label StyleClass="Muted" Text="Documentation URL" />
+                                <Label StyleClass="Mono" LineBreakMode="CharacterWrap"
+                                       Text="https://kjagdeesh.github.io/Sim-SMS-Gateway/docs/" />
+                            </VerticalStackLayout>
+                        </VerticalStackLayout>
+                    </Border>
+                    <Label StyleClass="Body"
+                           Text="To send SMS, start this server and keep your phone and computer on the same trusted Wi-Fi. In the website, choose Connect and enter the Same Wi-Fi server address and API access key above. Once connected, use Send Messages and check Dashboard for results." />
+                    <Border StyleClass="Warn" Padding="12">
+                        <Label StyleClass="WarnText"
+                               Text="The GitHub Pages website uses HTTPS, and browsers block its connection to this phone's HTTP server. The hosted site is for viewing; to send SMS from the web dashboard, run the web project on a trusted computer on the same Wi-Fi and open http://localhost:8766 there." />
+                    </Border>
+                </VerticalStackLayout>
+            </Border>
+
+            <Border StyleClass="Card">
+                <VerticalStackLayout Spacing="12">
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
                         <Border StyleClass="IconBox"><Label StyleClass="Icon" Text="&#xf121;" /></Border>
                         <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="1">
                             <Label StyleClass="Heading" Text="Try it" />
