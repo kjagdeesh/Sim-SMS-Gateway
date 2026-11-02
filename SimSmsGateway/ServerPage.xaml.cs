@@ -30,6 +30,14 @@ public partial class ServerPage : ContentPage
 
     private void OnGatewayStateChanged(object? sender, EventArgs e) => MainThread.BeginInvokeOnMainThread(Render);
 
+    private async void OnOpenWebsiteClicked(object? sender, EventArgs e)
+    {
+        if (sender is Button { CommandParameter: string url })
+        {
+            await PopupDialog.OpenLinkAsync(this, url);
+        }
+    }
+
     private void Render()
     {
         var running = Gateway.IsRunning;
