@@ -35,6 +35,14 @@ Send SMS through your Android phone's SIM with a local REST API, SQLite history,
 - [OpenAPI specification](web/openapi.json) — machine-readable API contract.
 - [Browser playground](web/index.html) — the dashboard, message forms, history, and interactive API reference.
 
+## Publish with GitHub Pages
+
+The [Pages workflow](.github/workflows/deploy-pages.yml) publishes the static `web/` folder, including both the browser website and documentation site. In the GitHub repository, open **Settings → Pages**, set **Build and deployment → Source** to **GitHub Actions**, then push changes to `main` or run **Deploy website to GitHub Pages** from the Actions tab.
+
+After the first successful deployment, the website will be available at [https://kjagdeesh.github.io/Sim-SMS-Gateway/](https://kjagdeesh.github.io/Sim-SMS-Gateway/) and the documentation at [https://kjagdeesh.github.io/Sim-SMS-Gateway/docs/](https://kjagdeesh.github.io/Sim-SMS-Gateway/docs/).
+
+> **Important:** GitHub Pages uses HTTPS, while the Android gateway currently exposes an HTTP-only API. Browsers block requests from the hosted website to the phone as mixed content, so the hosted dashboard is for browsing only; live connect, sending, history, and API testing require the HTTP website served on a trusted network. Enabling those features from GitHub Pages requires adding a secure HTTPS path to the phone API.
+
 ## Requirements
 
 - .NET 10 SDK with the Android workload
