@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="web/logo.svg" alt="Sim SMS Gateway app logo" width="104">
+  <img src="web/mobile-app-icon.svg" alt="Sim SMS Gateway Android app icon" width="104">
 </p>
 
 <h1 align="center">Sim SMS Gateway</h1>
