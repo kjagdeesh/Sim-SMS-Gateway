@@ -88,11 +88,7 @@ public partial class ApiDocumentationPage : ContentPage
             }
         }
 
-        stack.Add(BuildCodeWindow("cURL example", endpoint.Curl, FormatCurl(endpoint.Curl)));
-        var javaScript = GetJavaScriptExample(endpoint);
-        stack.Add(BuildCodeWindow("JavaScript example", javaScript, FormatSourceCode(javaScript)));
-        var python = GetPythonExample(endpoint);
-        stack.Add(BuildCodeWindow("Python example", python, FormatSourceCode(python)));
+        stack.Add(BuildCodeTabs(endpoint));
 
         return new Border { StyleClass = ["Card"], Content = stack };
     }
@@ -360,6 +356,134 @@ public partial class ApiDocumentationPage : ContentPage
             StrokeThickness = 1,
             StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 14 },
             Content = contents
+        };
+    }
+
+    private View BuildCodeTabs(Endpoint endpoint)
+    {
+        var javaScript = GetJavaScriptExample(endpoint);
+        var python = GetPythonExample(endpoint);
+        var examples = new (string Name, string Text, FormattedString Formatted)[]
+        {
+            ("cURL", endpoint.Curl, FormatCurl(endpoint.Curl)),
+            ("JavaScript", javaScript, FormatSourceCode(javaScript)),
+            ("Python", python, FormatSourceCode(python))
+        };
+        var selectedIndex = 0;
+        var title = new Label
+        {
+            Text = $"{examples[0].Name} example",
+            FontSize = 11,
+            TextColor = Color.FromArgb("#9AA7B4"),
+            VerticalOptions = LayoutOptions.Center
+        };
+        var code = new Label
+        {
+            FormattedText = examples[0].Formatted,
+            FontFamily = "monospace",
+            FontSize = 12,
+            LineBreakMode = LineBreakMode.WordWrap,
+            HorizontalOptions = LayoutOptions.Fill
+        };
+        var copy = new Button
+        {
+            StyleClass = ["Secondary"],
+            Text = "Copy",
+            FontSize = 11,
+            HeightRequest = 34,
+            Padding = new Thickness(12, 0)
+        };
+        copy.Clicked += async (_, _) =>
+        {
+            var sample = examples[selectedIndex];
+            await Clipboard.Default.SetTextAsync(sample.Text);
+            await PopupDialog.ShowAsync(this, $"{sample.Name} example copied", "The full example is ready to paste.", PopupKind.Success);
+        };
+
+        var header = new Grid
+        {
+            ColumnDefinitions = [new ColumnDefinition(GridLength.Auto), new ColumnDefinition(GridLength.Star), new ColumnDefinition(GridLength.Auto)],
+            ColumnSpacing = 10,
+            Padding = new Thickness(12, 8),
+            BackgroundColor = Color.FromArgb("#131B24")
+        };
+        var lights = new HorizontalStackLayout { Spacing = 5, VerticalOptions = LayoutOptions.Center };
+        lights.Add(BuildWindowLight("#FF5F57"));
+        lights.Add(BuildWindowLight("#FEBC2E"));
+        lights.Add(BuildWindowLight("#28C840"));
+        header.Add(lights, 0, 0);
+        header.Add(title, 1, 0);
+        header.Add(copy, 2, 0);
+
+        var tabBar = new Grid
+        {
+            ColumnDefinitions = [new ColumnDefinition(GridLength.Star), new ColumnDefinition(GridLength.Star), new ColumnDefinition(GridLength.Star)],
+            ColumnSpacing = 6,
+            Padding = 0
+        };
+        var tabs = new Button[examples.Length];
+        for (var index = 0; index < examples.Length; index++)
+        {
+            var tabIndex = index;
+            var tab = new Button
+            {
+                Text = examples[index].Name,
+                FontFamily = "OpenSansSemibold",
+                FontSize = 11,
+                HeightRequest = 38,
+                CornerRadius = 9,
+                Padding = new Thickness(4, 0)
+            };
+            tab.Clicked += (_, _) =>
+            {
+                selectedIndex = tabIndex;
+                title.Text = $"{examples[tabIndex].Name} example";
+                code.FormattedText = examples[tabIndex].Formatted;
+                UpdateTabStyles();
+            };
+            tabs[index] = tab;
+            tabBar.Add(tab, index, 0);
+        }
+
+        var content = new VerticalStackLayout
+        {
+            Spacing = 0,
+            Children =
+            {
+                header,
+                new VerticalStackLayout
+                {
+                    Padding = new Thickness(12, 10),
+                    Children = { code }
+                }
+            }
+        };
+        var window = new Border
+        {
+            Padding = 0,
+            BackgroundColor = Color.FromArgb("#0B1117"),
+            Stroke = Color.FromArgb("#263442"),
+            StrokeThickness = 1,
+            StrokeShape = new Microsoft.Maui.Controls.Shapes.RoundRectangle { CornerRadius = 14 },
+            Content = content
+        };
+        void UpdateTabStyles()
+        {
+            var inactiveBackground = App.IsDark ? "#143733" : "#E0F4F1";
+            var inactiveText = App.IsDark ? "#B7C6CD" : "#0F766E";
+            for (var index = 0; index < tabs.Length; index++)
+            {
+                var selected = index == selectedIndex;
+                tabs[index].BackgroundColor = Color.FromArgb(selected ? "#2DD4BF" : inactiveBackground);
+                tabs[index].TextColor = Color.FromArgb(selected ? "#06201D" : inactiveText);
+            }
+        }
+
+        UpdateTabStyles();
+        return new VerticalStackLayout
+        {
+            Spacing = 8,
+            Children = { tabBar, window }
         };
     }
 
