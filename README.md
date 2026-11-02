@@ -62,6 +62,42 @@ Open `build/sim-sms-gateway/SimSmsGateway.sln` in Visual Studio to work with the
 
 Open Sim SMS Gateway on the phone. A bottom navigation bar provides **Dashboard**, **Home** (default) and **Developer & Project**. The Dashboard shows message totals and card shortcuts to **Server**, **Message history**, **API documentation**, **Settings** (System/Light/Dark theme) and **About app** (project description fetched live from GitHub). On the Server page, tap **Start server** and grant SMS permission when prompted. Keep the app open while using the gateway. The page shows localhost and available Wi-Fi addresses, plus a generated API key. Message history and totals come from the same on-device SQLite database used by the API.
 
+## Build and publish a signed APK
+
+The [Android APK workflow](.github/workflows/build-android-apk.yml) builds a **Release** APK when Android app files change on `main`, when manually started from **Actions → Build signed Release APK → Run workflow**, or when you push a version tag such as `v1.0.0`. It uploads `SimSmsGateway-release-apk` as a workflow artifact; pushing a `v*` tag also publishes the APK as an asset on a public GitHub Release.
+
+### Set up signing once
+
+Create a release keystore on your own computer. Keep it backed up securely; every future APK update must use the same keystore.
+
+```powershell
+$keytool = Join-Path $env:JAVA_HOME "bin\keytool.exe"
+$keystore = Join-Path $env:USERPROFILE "sim-sms-gateway-release.jks"
+if (Test-Path -LiteralPath $keystore) { throw "Keystore already exists at $keystore; keep and use the existing key." }
+& $keytool -genkeypair -v -keystore $keystore -alias sim-sms-gateway -keyalg RSA -keysize 2048 -validity 10000
+if ($LASTEXITCODE -ne 0) { throw "keytool failed; fix its error before continuing." }
+if (-not (Test-Path -LiteralPath $keystore)) { throw "Keystore was not created at $keystore." }
+[Convert]::ToBase64String([IO.File]::ReadAllBytes($keystore))
+```
+
+In the repository, open **Settings → Secrets and variables → Actions** and add these repository secrets:
+
+| Secret | Value |
+|---|---|
+| `ANDROID_KEYSTORE_BASE64` | The single-line Base64 output from the second command |
+| `ANDROID_KEYSTORE_PASSWORD` | The keystore password chosen in `keytool` |
+| `ANDROID_KEY_ALIAS` | `sim-sms-gateway` |
+| `ANDROID_KEY_PASSWORD` | The key password chosen in `keytool` |
+
+Never commit the keystore or its passwords, and do not send them in chat. After adding the secrets, push app changes or run the workflow. To publish a public download, first update the app version in `SimSmsGateway/SimSmsGateway.csproj`, then push a version tag:
+
+```powershell
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+The resulting signed APK can be downloaded by anyone from the repository's **Releases** page. Since this is a sideloaded APK, Android may ask users to allow installation from their browser or file manager. Keep the keystore safe: losing it prevents signing compatible updates for users who already installed this release.
+
 ## Run the API playground
 
 From `build/sim-sms-gateway/web/`:

@@ -38,6 +38,23 @@ public partial class ServerPage : ContentPage
         }
     }
 
+    private async void OnWebsiteUrlTapped(object? sender, TappedEventArgs e)
+    {
+        if (e.Parameter is string url)
+        {
+            await PopupDialog.OpenLinkAsync(this, url);
+        }
+    }
+
+    private async void OnCopyWebsiteUrlClicked(object? sender, EventArgs e)
+    {
+        if (sender is Button { CommandParameter: string url })
+        {
+            await Clipboard.Default.SetTextAsync(url);
+            await PopupDialog.ShowAsync(this, "URL copied", "The website link is ready to paste.", PopupKind.Success);
+        }
+    }
+
     private void Render()
     {
         var running = Gateway.IsRunning;

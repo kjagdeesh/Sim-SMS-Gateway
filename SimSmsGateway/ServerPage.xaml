@@ -103,13 +103,39 @@
                         <VerticalStackLayout Spacing="8">
                             <VerticalStackLayout Spacing="2">
                                 <Label StyleClass="Muted" Text="Gateway website URL" />
-                                <Label StyleClass="Mono" LineBreakMode="CharacterWrap"
-                                       Text="https://kjagdeesh.github.io/Sim-SMS-Gateway/" />
+                                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                    <Label StyleClass="Mono" LineBreakMode="CharacterWrap" TextDecorations="Underline"
+                                           Text="https://kjagdeesh.github.io/Sim-SMS-Gateway/"
+                                           TextColor="{AppThemeBinding Light=#0F766E, Dark=#5EEAD4}">
+                                        <Label.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="OnWebsiteUrlTapped"
+                                                                  CommandParameter="https://kjagdeesh.github.io/Sim-SMS-Gateway/" />
+                                        </Label.GestureRecognizers>
+                                    </Label>
+                                    <Button Grid.Column="1" StyleClass="Secondary" WidthRequest="42" HeightRequest="42"
+                                            Padding="0" Text="&#xf0c5;" FontFamily="FASolid" FontSize="14"
+                                            Clicked="OnCopyWebsiteUrlClicked"
+                                            CommandParameter="https://kjagdeesh.github.io/Sim-SMS-Gateway/"
+                                            SemanticProperties.Description="Copy gateway website URL" />
+                                </Grid>
                             </VerticalStackLayout>
                             <VerticalStackLayout Spacing="2">
                                 <Label StyleClass="Muted" Text="Documentation URL" />
-                                <Label StyleClass="Mono" LineBreakMode="CharacterWrap"
-                                       Text="https://kjagdeesh.github.io/Sim-SMS-Gateway/docs/" />
+                                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                    <Label StyleClass="Mono" LineBreakMode="CharacterWrap" TextDecorations="Underline"
+                                           Text="https://kjagdeesh.github.io/Sim-SMS-Gateway/docs/"
+                                           TextColor="{AppThemeBinding Light=#0F766E, Dark=#5EEAD4}">
+                                        <Label.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="OnWebsiteUrlTapped"
+                                                                  CommandParameter="https://kjagdeesh.github.io/Sim-SMS-Gateway/docs/" />
+                                        </Label.GestureRecognizers>
+                                    </Label>
+                                    <Button Grid.Column="1" StyleClass="Secondary" WidthRequest="42" HeightRequest="42"
+                                            Padding="0" Text="&#xf0c5;" FontFamily="FASolid" FontSize="14"
+                                            Clicked="OnCopyWebsiteUrlClicked"
+                                            CommandParameter="https://kjagdeesh.github.io/Sim-SMS-Gateway/docs/"
+                                            SemanticProperties.Description="Copy documentation URL" />
+                                </Grid>
                             </VerticalStackLayout>
                         </VerticalStackLayout>
                     </Border>
