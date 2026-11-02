@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="456" height="456" viewBox="0 0 456 456" role="img" aria-label="Sim SMS Gateway Android app icon">
+  <defs>
+    <linearGradient id="bg" x1="40" y1="20" x2="420" y2="440" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2DD4BF"/>
+      <stop offset="1" stop-color="#0B5F68"/>
+    </linearGradient>
+  </defs>
+  <rect width="456" height="456" rx="100" fill="url(#bg)"/>
+  <g transform="translate(62 66) scale(4.5)">
+    <path d="M16 18a4 4 0 0 1 4-4h14l10 10v26a4 4 0 0 1-4 4H20a4 4 0 0 1-4-4z" fill="#FFFFFF"/>
+    <rect x="22" y="30" width="16" height="14" rx="3" fill="#0F766E"/>
+    <path d="M22 37h16M30 30v14" stroke="#FFFFFF" stroke-width="1.6" opacity=".55"/>
+    <path d="M46 12.5a11 11 0 0 1 6.5 6.5M46 6.5a17 17 0 0 1 11.5 11.5" fill="none" stroke="#FFFFFF" stroke-width="3.2" stroke-linecap="round"/>
+    <circle cx="45.2" cy="19.2" r="2.6" fill="#FFFFFF"/>
+  </g>
+</svg>
