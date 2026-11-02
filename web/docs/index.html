@@ -208,7 +208,7 @@ dotnet build .\build\sim-sms-gateway\SimSmsGateway\SimSmsGateway.csproj -t:Insta
                         <tr><td>Complete Documentation</td><td>Open this standalone product and technical guide.</td></tr>
                     </tbody></table></div>
                     <h2>Connect and preferences</h2>
-                    <p>The Connect dialog validates the URL, checks <code>/health</code>, and requests <code>/api/v1/stats</code> with the API key. The server URL is stored in browser local storage; the API key is stored in session storage for the current tab. Country and theme preferences use local storage.</p>
+                    <p>The Connect dialog validates the URL, checks <code>/health</code>, and requests <code>/api/v1/stats</code> with the API key. The server URL is stored in browser local storage; the API key is stored in session storage for the current tab. Select <strong>Disconnect</strong> in the top bar to clear both saved connection values; this does not stop the Android server. Country and theme preferences use local storage.</p>
                     <p>The included static server defaults to <code>127.0.0.1:8766</code>. This address is loopback-only; for an externally hosted website, the user's browser still needs a network route to the phone. HTTPS-hosted pages may be blocked from calling the phone's plain-HTTP API by browser mixed-content rules.</p>
                     <h2>Live API tester</h2>
                     <p>The API documentation page can send live requests to the connected phone. Health/history/stats requests do not send SMS. Single and bulk send requests show a confirmation prompt before sending.</p>

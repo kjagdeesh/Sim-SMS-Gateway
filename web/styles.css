@@ -609,6 +609,19 @@ i.fa-brands {
   color: var(--primary);
 }
 
+.button-disconnect {
+  border-color: var(--danger);
+  background: var(--danger);
+  color: var(--surface);
+}
+
+.button-disconnect:hover {
+  border-color: var(--danger);
+  background: var(--danger);
+  color: var(--surface);
+  filter: brightness(.92);
+}
+
 .button-block {
   width: 100%;
   min-height: 48px;

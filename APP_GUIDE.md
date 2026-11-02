@@ -81,7 +81,7 @@ The browser playground has a responsive side navigation:
 - **API Documentation** — endpoint reference, code examples, and live tester.
 - **Developer & Project** — developer profile and featured GitHub projects.
 
-Use **Connect** to enter the phone's server address and API key. The dashboard checks `/health` and then makes an authenticated stats request. Once connected, the URL is saved in browser local storage and the API key in session storage for the current browser tab. The selected country and theme are also saved in local storage.
+Use **Connect** to enter the phone's server address and API key. The dashboard checks `/health` and then makes an authenticated stats request. Once connected, the URL is saved in browser local storage and the API key in session storage for the current browser tab. Select **Disconnect** in the top bar to clear those connection values; this does not stop the Android server. The selected country and theme are also saved in local storage.
 
 The website's Node.js server serves static files only and binds to `127.0.0.1` by default on port `8766`. It is not the SMS API server and does not proxy API calls. The browser connects directly to the phone.
 

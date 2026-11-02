@@ -144,9 +144,29 @@ function renderConnection() {
     dot.dataset.state = conn.online ? "ok" : "";
     $("#conn-title").textContent = conn.online ? "Connected" : "Not connected";
     $("#conn-detail").textContent = conn.online ? conn.url.replace(/^https?:\/\//, "") : "Click to connect your phone";
-    $("#topbar-connect").replaceChildren(icon(conn.online ? "circle-check" : "plug"), h("span", {
-        text: conn.online ? "Connected" : "Connect"
+    const connectButton = $("#topbar-connect");
+    const action = conn.online ? "Disconnect" : "Connect";
+    connectButton.classList.toggle("button-disconnect", conn.online);
+    connectButton.setAttribute("aria-label", `${action} ${conn.online ? "from" : "to"} gateway`);
+    connectButton.title = `${action} ${conn.online ? "from" : "to"} gateway`;
+    connectButton.replaceChildren(icon(conn.online ? "circle-xmark" : "plug"), h("span", {
+        text: action
     }));
+}
+
+function disconnect() {
+    conn.url = "";
+    conn.key = "";
+    conn.online = false;
+    localStorage.removeItem("simsms.serverUrl");
+    sessionStorage.removeItem("simsms.apiKey");
+    historyOffset = 0;
+    $("#history-body").replaceChildren();
+    setStats(null);
+    renderConnection();
+    renderDocs();
+    onRouteEntered(currentRoute());
+    toast("Disconnected from your gateway");
 }
 
 function openConnectionDialog() {
@@ -188,7 +208,10 @@ async function connect(url, key) {
 }
 
 $("#connection-card").addEventListener("click", openConnectionDialog);
-$("#topbar-connect").addEventListener("click", openConnectionDialog);
+$("#topbar-connect").addEventListener("click", () => {
+    if (conn.online) disconnect();
+    else openConnectionDialog();
+});
 $("#dialog-close").addEventListener("click", () => $("#connection-dialog").close());
 document.addEventListener("click", (event) => {
     if (event.target.closest("[data-action='connect']")) openConnectionDialog();
