@@ -609,15 +609,15 @@ i.fa-brands {
   color: var(--primary);
 }
 
-.button-disconnect {
+#topbar-connect.button-disconnect {
   border-color: var(--danger);
-  background: var(--danger);
+  background-color: var(--danger);
   color: var(--surface);
 }
 
-.button-disconnect:hover {
+#topbar-connect.button-disconnect:hover {
   border-color: var(--danger);
-  background: var(--danger);
+  background-color: var(--danger);
   color: var(--surface);
   filter: brightness(.92);
 }
