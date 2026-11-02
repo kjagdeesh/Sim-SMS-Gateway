@@ -418,30 +418,48 @@ public partial class ApiDocumentationPage : ContentPage
         var tabBar = new Grid
         {
             ColumnDefinitions = [new ColumnDefinition(GridLength.Star), new ColumnDefinition(GridLength.Star), new ColumnDefinition(GridLength.Star)],
-            ColumnSpacing = 6,
-            Padding = 0
+            ColumnSpacing = 10,
+            HeightRequest = 44
         };
-        var tabs = new Button[examples.Length];
+        var tabLabels = new Label[examples.Length];
+        var tabIndicators = new Border[examples.Length];
         for (var index = 0; index < examples.Length; index++)
         {
             var tabIndex = index;
-            var tab = new Button
+            var tabLabel = new Label
             {
                 Text = examples[index].Name,
-                FontFamily = "OpenSansSemibold",
-                FontSize = 11,
-                HeightRequest = 38,
-                CornerRadius = 9,
-                Padding = new Thickness(4, 0)
+                FontFamily = "OpenSansRegular",
+                FontSize = 13,
+                HorizontalTextAlignment = TextAlignment.Center,
+                VerticalTextAlignment = TextAlignment.Center
             };
-            tab.Clicked += (_, _) =>
+            var indicator = new Border
+            {
+                HeightRequest = 2,
+                StrokeThickness = 0,
+                BackgroundColor = Colors.Transparent
+            };
+            var tap = new TapGestureRecognizer();
+            var tab = new Grid
+            {
+                RowDefinitions = [new RowDefinition(GridLength.Star), new RowDefinition(GridLength.Auto)],
+                RowSpacing = 0
+            };
+            tab.Add(tabLabel, 0, 0);
+            tab.Add(indicator, 0, 1);
+            tab.GestureRecognizers.Add(tap);
+            tap.Tapped += (_, _) =>
             {
                 selectedIndex = tabIndex;
                 title.Text = $"{examples[tabIndex].Name} example";
                 code.FormattedText = examples[tabIndex].Formatted;
                 UpdateTabStyles();
             };
-            tabs[index] = tab;
+            SemanticProperties.SetDescription(tab, $"{examples[index].Name} code tab");
+            SemanticProperties.SetHint(tab, $"Show the {examples[index].Name} example");
+            tabLabels[index] = tabLabel;
+            tabIndicators[index] = indicator;
             tabBar.Add(tab, index, 0);
         }
 
@@ -469,13 +487,15 @@ public partial class ApiDocumentationPage : ContentPage
         };
         void UpdateTabStyles()
         {
-            var inactiveBackground = App.IsDark ? "#143733" : "#E0F4F1";
             var inactiveText = App.IsDark ? "#B7C6CD" : "#0F766E";
-            for (var index = 0; index < tabs.Length; index++)
+            var selectedText = App.IsDark ? "#2DD4BF" : "#0F766E";
+            var divider = App.IsDark ? "#1E2E36" : "#E2E8EE";
+            for (var index = 0; index < examples.Length; index++)
             {
                 var selected = index == selectedIndex;
-                tabs[index].BackgroundColor = Color.FromArgb(selected ? "#2DD4BF" : inactiveBackground);
-                tabs[index].TextColor = Color.FromArgb(selected ? "#06201D" : inactiveText);
+                tabLabels[index].FontFamily = selected ? "OpenSansSemibold" : "OpenSansRegular";
+                tabLabels[index].TextColor = Color.FromArgb(selected ? selectedText : inactiveText);
+                tabIndicators[index].BackgroundColor = Color.FromArgb(selected ? selectedText : divider);
             }
         }
 
