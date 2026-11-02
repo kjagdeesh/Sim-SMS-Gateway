@@ -932,19 +932,115 @@ function codeSamples(endpoint, path) {
     };
 }
 
-function codeBlock(text) {
-    return h("div", {
-            class: "code-wrap"
+const JSON_TOKEN_PATTERN = /"(?:\\.|[^"\\])*"|-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?|\b(?:true|false|null)\b/g;
+const CODE_TOKEN_PATTERN =
+    /(?<comment>\/\/[^\r\n]*|#[^\r\n]*)|(?<string>"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|`(?:\\.|[^`\\])*`)|(?<flag>--?[a-zA-Z][\w-]*)|(?<number>-?\b\d+(?:\.\d+)?(?:[eE][+-]?\d+)?\b)|(?<identifier>[A-Za-z_$][\w$]*)|(?<punctuation>[{}()[\],.:;])|(?<operator>=>|===?|!==?|&&|\|\||[=+*/<>!-])/g;
+const CODE_KEYWORDS = {
+    javascript: new Set(["async", "await", "const", "else", "function", "if", "import", "let", "new", "return", "throw", "try"]),
+    python: new Set(["as", "def", "except", "False", "from", "import", "None", "True", "try", "with"])
+};
+const TERMINAL_LABELS = {
+    curl: "cURL",
+    javascript: "JavaScript",
+    python: "Python",
+    json: "JSON",
+    http: "HTTP",
+    text: "Output"
+};
+
+function highlightedCode(text, language) {
+    const nodes = [];
+    const pattern = language === "json" ? JSON_TOKEN_PATTERN : CODE_TOKEN_PATTERN;
+    pattern.lastIndex = 0;
+    let cursor = 0;
+    let match;
+
+    while ((match = pattern.exec(text)) !== null) {
+        if (match.index > cursor) nodes.push(text.slice(cursor, match.index));
+        const token = match[0];
+        let tokenType = "";
+
+        if (language === "json") {
+            if (token.startsWith('"')) {
+                tokenType = /^\s*:/.test(text.slice(match.index + token.length)) ? "key" : "string";
+            } else {
+                tokenType = /^\d/.test(token) || token.startsWith("-") ? "number" : "literal";
+            }
+        } else {
+            const groups = match.groups;
+            if (groups.comment) tokenType = "comment";
+            else if (groups.string) tokenType = "string";
+            else if (groups.flag) tokenType = "flag";
+            else if (groups.number) tokenType = "number";
+            else if (groups.punctuation) tokenType = "punctuation";
+            else if (groups.operator) tokenType = "operator";
+            else if (groups.identifier) {
+                if (language === "curl" && token === "curl") tokenType = "command";
+                else if (["GET", "POST", "PUT", "PATCH", "DELETE"].includes(token)) tokenType = "method";
+                else if (CODE_KEYWORDS[language]?.has(token)) tokenType = "keyword";
+                else if (["fetch", "console", "log", "print", "requests"].includes(token)) tokenType = "builtin";
+                else tokenType = "identifier";
+            }
+        }
+
+        nodes.push(tokenType ? h("span", {
+            class: `syntax-${tokenType}`
+        }, token) : token);
+        cursor = pattern.lastIndex;
+    }
+
+    if (cursor < text.length) nodes.push(text.slice(cursor));
+    return nodes;
+}
+
+function terminalCodeBlock(text, language, copy = true) {
+    const code = h("pre", {
+        class: "code-block"
+    });
+    const label = h("span", {
+        class: "terminal-label",
+        text: TERMINAL_LABELS[language] ?? "Code"
+    });
+    const copyButton = copy ? h("button", {
+        class: "copy",
+        type: "button",
+        onclick: () => copyText(code.textContent ?? "")
+    }, icon("copy"), "Copy") : null;
+    const element = h("div", {
+            class: "code-terminal",
+            "data-language": language
         },
-        h("button", {
-            class: "copy",
-            type: "button",
-            onclick: () => copyText(text)
-        }, icon("copy"), "Copy"),
-        h("pre", {
-            class: "code-block",
-            text
-        }));
+        h("div", {
+            class: "code-terminal-bar"
+        }, h("span", {
+            class: "terminal-dots",
+            "aria-hidden": "true"
+        }, h("i", {
+            class: "terminal-dot red"
+        }), h("i", {
+            class: "terminal-dot yellow"
+        }), h("i", {
+            class: "terminal-dot green"
+        })), label, copyButton),
+        code);
+
+    const setContent = (value, nextLanguage = language) => {
+        element.dataset.language = nextLanguage;
+        label.textContent = TERMINAL_LABELS[nextLanguage] ?? "Code";
+        code.replaceChildren(...highlightedCode(value, nextLanguage));
+    };
+    setContent(text);
+    return {
+        element,
+        setContent
+    };
+}
+
+function codeBlock(text, language) {
+    const blockLanguage = language ?? (/^(?:Authorization|Content-Type):/im.test(text) ? "http" : "text");
+    return h("div", {
+        class: "code-wrap"
+    }, terminalCodeBlock(text, blockLanguage).element);
 }
 
 function docsTable(columns, rows) {
@@ -1049,10 +1145,7 @@ function renderTryIt(endpoint) {
         spellcheck: "false"
     }) : null;
     if (bodyInput) bodyInput.value = JSON.stringify(endpoint.body, null, 2);
-    const output = h("pre", {
-        class: "code-block",
-        text: "Response will appear here."
-    });
+    const output = terminalCodeBlock("Response will appear here.", "json");
     const status = h("span", {
         class: "response-code",
         text: "—"
@@ -1070,7 +1163,7 @@ function renderTryIt(endpoint) {
 
         if (endpoint.sends && !confirm("This will send a real SMS through your SIM. Continue?")) return;
         run.disabled = true;
-        output.textContent = "Sending…";
+        output.setContent("Sending…", "text");
         try {
             const {
                 response,
@@ -1084,11 +1177,11 @@ function renderTryIt(endpoint) {
             });
             status.textContent = `HTTP ${response.status}`;
             status.dataset.state = response.ok ? "ok" : "error";
-            output.textContent = json ? JSON.stringify(json, null, 2) : rawBody || "(empty response)";
+            output.setContent(json ? JSON.stringify(json, null, 2) : rawBody || "(empty response)", json ? "json" : "text");
         } catch (error) {
             status.textContent = "Failed";
             status.dataset.state = "error";
-            output.textContent = describeError(error);
+            output.setContent(describeError(error), "text");
         } finally {
             run.disabled = false;
         }
@@ -1123,7 +1216,7 @@ function renderTryIt(endpoint) {
                 text: "This sends a real SMS. Change the number in the body to your own before running."
             })) : null,
             h("div", {}, run),
-            output));
+            output.element));
 }
 
 function renderEndpoint(endpoint) {
@@ -1133,7 +1226,7 @@ function renderEndpoint(endpoint) {
     const showLang = (lang) => {
         for (const [name, button] of Object.entries(langButtons)) button.setAttribute("aria-pressed", String(
             name === lang));
-        sampleOutput.replaceChildren(codeBlock(samples[lang]));
+        sampleOutput.replaceChildren(codeBlock(samples[lang], lang));
     };
     for (const [name, label] of [
             ["curl", "cURL"],
@@ -1232,7 +1325,7 @@ function renderEndpoint(endpoint) {
                 style: undefined
             }, h("p", {
                 text: item.text
-            }), codeBlock(JSON.stringify(item.example, null, 2)))))));
+            }), codeBlock(JSON.stringify(item.example, null, 2), "json"))))));
 
     nodes.push(renderTryIt(endpoint));
     return nodes;
