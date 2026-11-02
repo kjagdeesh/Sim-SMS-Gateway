@@ -504,6 +504,18 @@ function showRaw(status, body, isError) {
     $("#response-body").textContent = body;
 }
 
+function clearSendFields() {
+    $("#destination").value = "";
+    $("#message").value = "";
+    $("#character-count").textContent = "0 / 1600";
+    $("#recipient-entry").value = "";
+    $("#recipient-file").value = "";
+    recipients = [];
+    setStatus($("#recipient-note"), "", "");
+    renderRecipients();
+    updateSinglePreview();
+}
+
 $("#sms-form").addEventListener("submit", async (event) => {
     event.preventDefault();
     showSendError("");
@@ -533,7 +545,11 @@ $("#sms-form").addEventListener("submit", async (event) => {
             "(empty response)", !response.ok);
 
         if (path.endsWith("/bulk") && response.ok) {
+            const allSucceeded = Array.isArray(json?.results) &&
+                json.results.length === body.recipients.length &&
+                json.results.every((item) => item.status === "success");
             showResults(json.results);
+            if (allSucceeded) clearSendFields();
             toast(`${json.success} sent, ${json.failed} failed`);
         } else if (!path.endsWith("/bulk") && (response.ok || response.status === 503)) {
             showResults([{
@@ -541,6 +557,7 @@ $("#sms-form").addEventListener("submit", async (event) => {
                 status: response.ok ? "success" : "failed",
                 error: response.ok ? null : json?.error
             }]);
+            if (response.ok) clearSendFields();
             toast(response.ok ? "Message accepted by Android" : "Message failed");
         } else {
             throw new Error(apiError(response, json));
