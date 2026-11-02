@@ -42,6 +42,7 @@ const csp =
 async function main() {
     const files = await collectFiles(root);
     files.set("/", files.get("/index.html"));
+    if (files.has("/docs/index.html")) files.set("/docs/", files.get("/docs/index.html"));
 
     const server = http.createServer(async (request, response) => {
         if (request.method !== "GET") {
@@ -55,6 +56,13 @@ async function main() {
 
         const pathname = decodeURIComponent(new URL(request.url, `http://${request.headers.host}`)
             .pathname);
+        if (pathname === "/docs") {
+            response.writeHead(308, {
+                "Location": "/docs/"
+            });
+            response.end();
+            return;
+        }
         const file = files.get(pathname);
         if (!file) {
             response.writeHead(404, {

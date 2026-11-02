@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0b1a1f">
+    <meta name="description"
+        content="Complete Sim SMS Gateway documentation for setup, app navigation, SMS sending, API use, security, and server internals.">
+    <title>Documentation - Sim SMS Gateway</title>
+    <link rel="icon" href="../logo.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../vendor/fontawesome/css/fontawesome.min.css">
+    <link rel="stylesheet" href="../vendor/fontawesome/css/solid.min.css">
+    <link rel="stylesheet" href="./styles.css">
+    <script src="./app.js" defer></script>
+</head>
+
+<body>
+    <a class="skip-link" href="#doc-content">Skip to documentation</a>
+    <div class="docs-shell">
+        <aside id="docs-sidebar" class="docs-sidebar" aria-label="Documentation navigation">
+            <a class="docs-brand" href="#/overview">
+                <img src="../logo.svg" alt="" width="42" height="42">
+                <span>Sim SMS Gateway<small>Complete documentation</small></span>
+            </a>
+
+            <label class="search-box" for="docs-search">
+                <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                <input id="docs-search" type="search" placeholder="Search documentation" autocomplete="off">
+                <kbd>/</kbd>
+            </label>
+            <p id="search-empty" class="search-empty" hidden>No matching topics.</p>
+
+            <nav id="docs-nav">
+                <div class="nav-group" data-nav-group>
+                    <p>Start here</p>
+                    <a href="#/overview" data-doc-link="overview" data-search="welcome product features overview">Overview</a>
+                    <a href="#/getting-started" data-doc-link="getting-started" data-search="requirements install build run connect setup">Getting started</a>
+                </div>
+                <div class="nav-group" data-nav-group>
+                    <p>Product guides</p>
+                    <a href="#/android-app" data-doc-link="android-app" data-search="mobile android dashboard home developer server settings about navigation">Android app</a>
+                    <a href="#/browser-dashboard" data-doc-link="browser-dashboard" data-search="website browser playground dashboard theme connect navigation">Browser dashboard</a>
+                    <a href="#/sending" data-doc-link="sending" data-search="send message sms single bulk country phone recipients csv fields clear success failure">Sending messages</a>
+                    <a href="#/history" data-doc-link="history" data-search="message history sqlite status success failed filter pagination counts">History and statuses</a>
+                </div>
+                <div class="nav-group" data-nav-group>
+                    <p>API</p>
+                    <a href="#/api-reference" data-doc-link="api-reference" data-search="rest api endpoints authentication bearer request validation limits">API reference</a>
+                    <a href="#/api-examples" data-doc-link="api-examples" data-search="curl javascript python json code examples request response">Code examples</a>
+                </div>
+                <div class="nav-group" data-nav-group>
+                    <p>Engineering</p>
+                    <a href="#/architecture" data-doc-link="architecture" data-search="technical architecture components flow lifecycle">Architecture</a>
+                    <a href="#/http-server" data-doc-link="http-server" data-search="tcp listener http parser c# server routes cors timeout limits">HTTP server internals</a>
+                    <a href="#/storage" data-doc-link="storage" data-search="sqlite database messages table schema persistence retention">SQLite and storage</a>
+                    <a href="#/troubleshooting" data-doc-link="troubleshooting" data-search="troubleshoot errors 400 401 415 503 network wifi">Troubleshooting</a>
+                    <a href="#/security" data-doc-link="security" data-search="security privacy http tls key c cors network">Security and privacy</a>
+                    <a href="#/development" data-doc-link="development" data-search="development source code tests build extend ismsSender">Development and testing</a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="https://github.com/kjagdeesh/Sim-SMS-Gateway" target="_blank" rel="noopener noreferrer">
+                    Project on GitHub <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
+                </a>
+                <span>Sim SMS Gateway</span>
+            </div>
+        </aside>
+
+        <button id="docs-scrim" class="docs-scrim" type="button" aria-label="Close documentation menu" hidden></button>
+
+        <div class="docs-main">
+            <header class="docs-topbar">
+                <button id="menu-toggle" class="topbar-icon menu-toggle" type="button" aria-label="Open documentation menu"
+                    aria-controls="docs-sidebar" aria-expanded="false">
+                    <i class="fa-solid fa-bars" aria-hidden="true"></i>
+                </button>
+                <div class="breadcrumbs"><span>Documentation</span><i class="fa-solid fa-chevron-right" aria-hidden="true"></i><strong id="current-title">Overview</strong></div>
+                <div class="topbar-actions">
+                    <a class="gateway-link" href="../index.html" target="_blank" rel="noopener noreferrer">
+                        <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i> Gateway
+                    </a>
+                    <button id="theme-toggle" class="topbar-icon" type="button" aria-label="Switch to dark theme" title="Toggle theme">
+                        <i class="fa-solid fa-moon" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </header>
+
+            <main id="doc-content" class="doc-content" tabindex="-1">
+                <article id="overview" data-doc-page>
+                    <div class="eyebrow"><span class="eyebrow-dot"></span> SIM SMS GATEWAY / DOCUMENTATION</div>
+                    <h1>Everything you need to run your SMS gateway.</h1>
+                    <p class="lead">Setup, app navigation, API integration, message history, and the technical details behind the Android server - all in one place.</p>
+                    <div class="overview-grid">
+                        <a class="overview-card" href="#/getting-started">
+                            <span class="card-icon"><i class="fa-solid fa-rocket" aria-hidden="true"></i></span>
+                            <strong>Get started</strong>
+                            <span>Install the app, start the gateway, and connect your browser.</span>
+                            <span class="card-link">Start setup <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+                        </a>
+                        <a class="overview-card" href="#/api-reference">
+                            <span class="card-icon"><i class="fa-solid fa-code" aria-hidden="true"></i></span>
+                            <strong>Use the API</strong>
+                            <span>Understand authentication, request formats, endpoint limits, and responses.</span>
+                            <span class="card-link">Read API reference <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+                        </a>
+                        <a class="overview-card" href="#/architecture">
+                            <span class="card-icon"><i class="fa-solid fa-diagram-project" aria-hidden="true"></i></span>
+                            <strong>Understand the server</strong>
+                            <span>Follow a request from the browser through Android SMS submission and SQLite.</span>
+                            <span class="card-link">Explore architecture <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+                        </a>
+                    </div>
+                    <div class="callout callout-warn">
+                        <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+                        <div><strong>Network safety</strong><p>The phone API uses plain HTTP on port 8765. Use it only on a trusted network; never expose or port-forward it to the public internet.</p></div>
+                    </div>
+                    <h2>How it works</h2>
+                    <p>Your app or browser sends a JSON request directly to the Android phone. The gateway validates it, submits the SMS through the phone's default SIM, and stores the result in the app's private SQLite database.</p>
+                    <div class="flow-grid">
+                        <div><span>01</span><strong>Client</strong><small>Browser or API caller</small></div>
+                        <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                        <div><span>02</span><strong>Gateway API</strong><small>Auth and validation</small></div>
+                        <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                        <div><span>03</span><strong>Android</strong><small>SMS manager and SIM</small></div>
+                        <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                        <div><span>04</span><strong>SQLite</strong><small>Persistent send history</small></div>
+                    </div>
+                    <div class="page-nav"><span></span><a href="#/getting-started">Next: Getting started <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a></div>
+                </article>
+
+                <article id="getting-started" data-doc-page hidden>
+                    <div class="eyebrow">START HERE</div>
+                    <h1>Getting started</h1>
+                    <p class="lead">Prepare the Android phone, launch the local API, and connect the browser playground.</p>
+                    <h2>Requirements</h2>
+                    <ul>
+                        <li>An Android phone with a SIM that can send SMS.</li>
+                        <li>SMS permission granted to Sim SMS Gateway when prompted.</li>
+                        <li>.NET 10 SDK and the Android workload to build from source.</li>
+                        <li>Node.js 18+ to run the browser playground.</li>
+                        <li>The phone and browser device must be able to reach one another on a trusted network.</li>
+                    </ul>
+                    <h2>Build and install</h2>
+                    <p>From the repository root in PowerShell, build and install the Android app:</p>
+                    <div class="terminal" data-language="powershell">
+                        <div class="terminal-bar"><span class="terminal-dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="terminal-title">PowerShell</span><button class="copy-button" type="button" data-copy><i class="fa-solid fa-copy" aria-hidden="true"></i><span>Copy</span></button></div>
+                        <pre><code>dotnet build .\build\sim-sms-gateway\SimSmsGateway.sln
+dotnet build .\build\sim-sms-gateway\SimSmsGateway\SimSmsGateway.csproj -t:Install -f net10.0-android</code></pre>
+                    </div>
+                    <h2>Start the gateway</h2>
+                    <ol class="steps">
+                        <li><span>1</span><div>Open Sim SMS Gateway and select <strong>Dashboard → Server</strong>.</div></li>
+                        <li><span>2</span><div>Tap <strong>Start server</strong> and allow SMS permission if Android asks.</div></li>
+                        <li><span>3</span><div>Copy a <strong>Same Wi-Fi</strong> address and the API key. Use the Wi-Fi address from another device; <code>localhost</code> refers to the current device.</div></li>
+                        <li><span>4</span><div>Keep the app open while using the API. The server is not a background service.</div></li>
+                    </ol>
+                    <h2>Run and connect the browser playground</h2>
+                    <p>From <code>build\sim-sms-gateway\web</code>, run <code>npm start</code>, then open <code>http://localhost:8766</code>. Choose <strong>Connect</strong>, enter the phone's address and API key, and confirm the status changes to Connected.</p>
+                    <p>The connection check calls the unauthenticated health endpoint and then an authenticated stats endpoint. The browser connects directly to the phone; the Node process only serves static website files.</p>
+                    <div class="callout"><i class="fa-solid fa-circle-info" aria-hidden="true"></i><div><strong>Documentation site URL</strong><p>When using the included Node server, this standalone site is available at <code>http://localhost:8766/docs/</code>.</p></div></div>
+                    <div class="page-nav"><a href="#/overview"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Previous: Overview</a><a href="#/android-app">Next: Android app <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a></div>
+                </article>
+
+                <article id="android-app" data-doc-page hidden>
+                    <div class="eyebrow">PRODUCT GUIDES</div>
+                    <h1>Android app guide</h1>
+                    <p class="lead">Navigate the native app, start the server, and understand what each page displays.</p>
+                    <h2>Bottom navigation</h2>
+                    <div class="table-wrap"><table><thead><tr><th>Tab</th><th>Purpose</th></tr></thead><tbody>
+                        <tr><td>Dashboard</td><td>Message totals and cards linking to Server, Message History, API Documentation, Settings, and About App.</td></tr>
+                        <tr><td>Home</td><td>Default launch tab with gateway status, overview, and shortcuts to Server and API Documentation.</td></tr>
+                        <tr><td>Developer</td><td>Developer profile and project links, loaded from GitHub when available.</td></tr>
+                    </tbody></table></div>
+                    <h2>Server page</h2>
+                    <ol>
+                        <li>Start or stop the gateway with the status button.</li>
+                        <li>Open or copy the localhost and available Wi-Fi addresses.</li>
+                        <li>Reveal or copy the generated API key. It is generated when the app starts and changes on restart.</li>
+                        <li>Copy the sample cURL command from the terminal-style panel.</li>
+                    </ol>
+                    <p>The listener uses port <code>8765</code> and remains active only while the app process is running. The app asks for SMS permission before Android can submit messages.</p>
+                    <h2>Message History</h2>
+                    <p>Use All, Success, or Failed filters. The page loads 50 records at a time and shows destination, message, local time, status, and a failure reason when available.</p>
+                    <h2>API Documentation</h2>
+                    <p>The native reference describes all five endpoints, request fields, cURL/JavaScript/Python examples, and JSON. Its live tester sends real requests; sending endpoints require confirmation and can incur carrier charges.</p>
+                    <h2>Settings and About App</h2>
+                    <ul>
+                        <li><strong>Settings:</strong> choose System, Light, or Dark theme; review app version, port, stored count, and server status.</li>
+                        <li><strong>About App:</strong> loads the project description and README summary from GitHub, with a built-in fallback when offline.</li>
+                        <li>Uninstalling the app removes its private SQLite history.</li>
+                    </ul>
+                    <div class="page-nav"><a href="#/getting-started"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Previous: Getting started</a><a href="#/browser-dashboard">Next: Browser dashboard <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a></div>
+                </article>
+
+                <article id="browser-dashboard" data-doc-page hidden>
+                    <div class="eyebrow">PRODUCT GUIDES</div>
+                    <h1>Browser dashboard guide</h1>
+                    <p class="lead">The browser is a client of the Android API. It does not proxy SMS through the Node.js static-file server.</p>
+                    <h2>Website pages</h2>
+                    <div class="table-wrap"><table><thead><tr><th>Page</th><th>What you can do</th></tr></thead><tbody>
+                        <tr><td>Home</td><td>Review the gateway overview, features, and links to sending or API details.</td></tr>
+                        <tr><td>Dashboard</td><td>View total/success/failed counts, filter history, refresh, and load older records (25 per page).</td></tr>
+                        <tr><td>Send Messages</td><td>Compose one SMS or a bulk message, inspect results, and correct failed entries.</td></tr>
+                        <tr><td>API Documentation</td><td>Read endpoint details, switch code-language tabs, copy snippets, and try live requests.</td></tr>
+                        <tr><td>Developer &amp; Project</td><td>View the public developer profile and featured GitHub projects.</td></tr>
+                        <tr><td>Complete Documentation</td><td>Open this standalone product and technical guide.</td></tr>
+                    </tbody></table></div>
+                    <h2>Connect and preferences</h2>
+                    <p>The Connect dialog validates the URL, checks <code>/health</code>, and requests <code>/api/v1/stats</code> with the API key. The server URL is stored in browser local storage; the API key is stored in session storage for the current tab. Country and theme preferences use local storage.</p>
+                    <p>The included static server defaults to <code>127.0.0.1:8766</code>. This address is loopback-only; for an externally hosted website, the user's browser still needs a network route to the phone. HTTPS-hosted pages may be blocked from calling the phone's plain-HTTP API by browser mixed-content rules.</p>
+                    <h2>Live API tester</h2>
+                    <p>The API documentation page can send live requests to the connected phone. Health/history/stats requests do not send SMS. Single and bulk send requests show a confirmation prompt before sending.</p>
+                    <div class="callout callout-warn"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i><div><strong>Protect the browser session</strong><p>Do not leave the API key in session storage on a shared computer. Clear browser storage when finished.</p></div></div>
+                    <div class="page-nav"><a href="#/android-app"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Previous: Android app</a><a href="#/sending">Next: Sending messages <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a></div>
+                </article>
+
+                <article id="sending" data-doc-page hidden>
+                    <div class="eyebrow">PRODUCT GUIDES</div>
+                    <h1>Sending messages</h1>
+                    <p class="lead">Send one SMS or the same text to a validated list of recipients through the phone's SIM.</p>
+                    <h2>Single message</h2>
+                    <ol class="steps">
+                        <li><span>1</span><div>Open <strong>Send Messages</strong> and select <strong>Single message</strong>.</div></li>
+                        <li><span>2</span><div>Select a default country. Its calling code is shown beside the number field. Local numbers use this code; numbers starting with <code>+</code> or <code>00</code> are treated as international.</div></li>
+                        <li><span>3</span><div>Enter a valid phone number and message (up to 1,600 characters), then review the international-format preview.</div></li>
+                        <li><span>4</span><div>Press <strong>Send SMS</strong>. The result panel shows the HTTP response and accepted/failed status.</div></li>
+                    </ol>
+                    <p>API destinations must match E.164 format: <code>^\+[1-9]\d{7,14}$</code>. For example, <code>+14155550123</code>.</p>
+                    <h2>Bulk message</h2>
+                    <ol>
+                        <li>Select <strong>Bulk messages</strong>.</li>
+                        <li>Type or paste numbers separated by new lines, commas, semicolons, or spaces; press Enter to add typed entries.</li>
+                        <li>Or import a <code>.csv</code> or <code>.txt</code> file up to 512 KiB. The importer looks for a phone-number-like value in each row.</li>
+                        <li>Fix or remove red invalid entries. Duplicate normalized numbers are skipped.</li>
+                        <li>Send to 1-100 unique E.164 recipients with one shared message.</li>
+                    </ol>
+                    <p>The server validates all recipients before sending anything. If validation passes, it sends sequentially; one Android/SIM send failure does not stop the remaining recipients.</p>
+                    <h2>When the form clears</h2>
+                    <ul>
+                        <li>After a successful single send, the destination and message are cleared.</li>
+                        <li>After a bulk send, the message and recipients clear only if every recipient succeeded.</li>
+                        <li>Failed sends and partially failed bulk batches preserve the form so the user does not lose inputs. The selected default country is retained.</li>
+                    </ul>
+                    <p>Success means Android accepted the submission. It is not a carrier delivery receipt. Sending may incur charges; only message recipients who have agreed to receive SMS.</p>
+                    <div class="page-nav"><a href="#/browser-dashboard"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Previous: Browser dashboard</a><a href="#/history">Next: History and statuses <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a></div>
+                </article>
+
+                <article id="history" data-doc-page hidden>
+                    <div class="eyebrow">PRODUCT GUIDES</div>
+                    <h1>History and statuses</h1>
+                    <p class="lead">Each handled SMS attempt is saved on the Android device and shared by the app dashboard and API.</p>
+                    <h2>Status meanings</h2>
+                    <div class="status-grid">
+                        <div class="status-card success"><strong>success</strong><p>Android accepted the SMS request for submission. Delivery to the recipient is not confirmed.</p></div>
+                        <div class="status-card failed"><strong>failed</strong><p>Android or the SIM rejected the submission; the record may contain an error reason.</p></div>
+                    </div>
+                    <h2>Find records</h2>
+                    <ul>
+                        <li>The web Dashboard shows total, successful, failed, and success-rate statistics. It pages through 25 entries at a time.</li>
+                        <li>The Android Message History page filters All, Success, or Failed and loads 50 entries at a time.</li>
+                        <li>Both views show newest entries first. The web page can refresh stats and history.</li>
+                        <li>The API supports status filtering and limit/offset paging. See <a href="#/api-reference">API reference</a>.</li>
+                    </ul>
+                    <h2>What is saved</h2>
+                    <p>The phone stores the destination, message text, status, error (if any), timestamp, and optional bulk batch ID. Requests rejected by validation before the sender is called are not send attempts and are not written to history.</p>
+                    <p>The database is in the app's private data directory. No automatic history pruning is implemented; uninstalling the app removes its private app data.</p>
+                    <div class="callout"><i class="fa-solid fa-circle-info" aria-hidden="true"></i><div><strong>Bulk results</strong><p>A validated bulk request can return HTTP 200 while some individual recipients have <code>failed</code> status. Check each result, not only the HTTP status.</p></div></div>
+                    <div class="page-nav"><a href="#/sending"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Previous: Sending messages</a><a href="#/api-reference">Next: API reference <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a></div>
+                </article>
+
+                <article id="api-reference" data-doc-page hidden>
+                    <div class="eyebrow">API</div>
+                    <h1>REST API reference</h1>
+                    <p class="lead">The Android app exposes a small JSON API on port 8765. Replace <code>PHONE_IP</code> with the address shown on the phone's Server page.</p>
+                    <div class="callout callout-warn"><i class="fa-solid fa-lock" aria-hidden="true"></i><div><strong>HTTP is not encrypted</strong><p>Use the API only on a trusted network. The bearer key and message contents travel in cleartext over HTTP.</p></div></div>
+                    <h2>Authentication</h2>
+                    <p>All API endpoints except <code>GET /health</code> require the bearer key generated by the Android app. The key changes when the app restarts. Include this header:</p>
+                    <div class="terminal" data-language="http">
+                        <div class="terminal-bar"><span class="terminal-dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="terminal-title">HTTP header</span><button class="copy-button" type="button" data-copy><i class="fa-solid fa-copy" aria-hidden="true"></i><span>Copy</span></button></div>
+                        <pre><code>Authorization: Bearer YOUR_API_KEY</code></pre>
+                    </div>
+                    <p>POST requests require <code>Content-Type: application/json</code>. The API accepts E.164 destinations and messages up to 1,600 characters.</p>
+                    <h2>Endpoints</h2>
+                    <div class="table-wrap"><table><thead><tr><th>Method and path</th><th>Auth</th><th>Request</th><th>Success</th></tr></thead><tbody>
+                        <tr><td><code>GET /health</code></td><td>No</td><td>None</td><td>200: <code>{"status":"online"}</code></td></tr>
+                        <tr><td><code>POST /api/v1/messages</code></td><td>Bearer</td><td><code>to</code> E.164; <code>message</code> string</td><td>202: accepted, record ID</td></tr>
+                        <tr><td><code>POST /api/v1/messages/bulk</code></td><td>Bearer</td><td><code>recipients</code> array (1-100 unique E.164); <code>message</code></td><td>200: batch ID, counts, per-recipient results</td></tr>
+                        <tr><td><code>GET /api/v1/messages</code></td><td>Bearer</td><td><code>status</code> optional; <code>limit</code> 1-200 (default 50); <code>offset</code> 0+ (default 0)</td><td>200: items, limit, offset</td></tr>
+                        <tr><td><code>GET /api/v1/stats</code></td><td>Bearer</td><td>None</td><td>200: total, success, failed</td></tr>
+                    </tbody></table></div>
+                    <h2>Responses and errors</h2>
+                    <div class="table-wrap"><table><thead><tr><th>Status</th><th>Meaning</th></tr></thead><tbody>
+                        <tr><td>200</td><td>Health, history, stats, or a processed bulk request. Inspect bulk per-recipient statuses.</td></tr>
+                        <tr><td>202</td><td>Android accepted a single SMS request; carrier delivery is not confirmed.</td></tr>
+                        <tr><td>400</td><td>Malformed JSON, invalid E.164 number/message, duplicate or invalid bulk recipient, or invalid history query.</td></tr>
+                        <tr><td>401</td><td>Missing or invalid bearer key.</td></tr>
+                        <tr><td>404</td><td>Unknown endpoint.</td></tr>
+                        <tr><td>413 / 431</td><td>Request body exceeds 32 KiB / headers exceed 16 KiB.</td></tr>
+                        <tr><td>415</td><td>POST content type is not JSON.</td></tr>
+                        <tr><td>503</td><td>Android/SIM rejected a single send. The failure is recorded.</td></tr>
+                    </tbody></table></div>
+                    <p>See <a href="#/api-examples">Code examples</a> for cURL, JavaScript, Python, and JSON. The downloadable contract is <a href="../openapi.json" target="_blank" rel="noopener noreferrer">openapi.json</a>.</p>
+                    <div class="page-nav"><a href="#/history"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Previous: History and statuses</a><a href="#/api-examples">Next: Code examples <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a></div>
+                </article>
+
+                <article id="api-examples" data-doc-page hidden>
+                    <div class="eyebrow">API</div>
+                    <h1>Code examples</h1>
+                    <p class="lead">These examples send one SMS. Replace the phone address and API key with values from the Server page. Sending an SMS may incur charges.</p>
+                    <div class="callout callout-warn"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i><div><strong>Use an authorized recipient</strong><p>Test with your own number or a recipient who has agreed to receive the message.</p></div></div>
+                    <div class="example-group" data-example-group>
+                        <div class="example-tabs" role="tablist" aria-label="Choose an example language">
+                            <button type="button" role="tab" data-example-tab="curl" aria-selected="true">cURL</button>
+                            <button type="button" role="tab" data-example-tab="javascript" aria-selected="false">JavaScript</button>
+                            <button type="button" role="tab" data-example-tab="python" aria-selected="false">Python</button>
+                        </div>
+                        <section class="example-panel" data-example-panel="curl">
+                            <div class="terminal" data-language="curl">
+                                <div class="terminal-bar"><span class="terminal-dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="terminal-title">cURL - POST /api/v1/messages</span><button class="copy-button" type="button" data-copy><i class="fa-solid fa-copy" aria-hidden="true"></i><span>Copy</span></button></div>
+                                <pre><code><span class="syn-command">curl</span> -X <span class="syn-method">POST</span> <span class="syn-string">"http://PHONE_IP:8765/api/v1/messages"</span> \
+  -H <span class="syn-string">"Authorization: Bearer YOUR_API_KEY"</span> \
+  -H <span class="syn-string">"Content-Type: application/json"</span> \
+  -d <span class="syn-string">'{"to":"+14155550123","message":"Hello from my app"}'</span></code></pre>
+                            </div>
+                        </section>
+                        <section class="example-panel" data-example-panel="javascript" hidden>
+                            <div class="terminal" data-language="javascript">
+                                <div class="terminal-bar"><span class="terminal-dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="terminal-title">JavaScript - Fetch</span><button class="copy-button" type="button" data-copy><i class="fa-solid fa-copy" aria-hidden="true"></i><span>Copy</span></button></div>
+                                <pre><code><span class="syn-keyword">const</span> baseUrl = <span class="syn-string">"http://PHONE_IP:8765"</span>;
+<span class="syn-keyword">const</span> apiKey = <span class="syn-string">"YOUR_API_KEY"</span>;
+<span class="syn-keyword">const</span> response = <span class="syn-keyword">await</span> fetch(<span class="syn-string">`${baseUrl}/api/v1/messages`</span>, {
+  method: <span class="syn-string">"POST"</span>,
+  headers: {
+    Authorization: <span class="syn-string">`Bearer ${apiKey}`</span>,
+    <span class="syn-string">"Content-Type"</span>: <span class="syn-string">"application/json"</span>
+  },
+  body: JSON.stringify({ to: <span class="syn-string">"+14155550123"</span>, message: <span class="syn-string">"Hello from my app"</span> })
+});
+console.log(response.status, <span class="syn-keyword">await</span> response.json());</code></pre>
+                            </div>
+                        </section>
+                        <section class="example-panel" data-example-panel="python" hidden>
+                            <div class="terminal" data-language="python">
+                                <div class="terminal-bar"><span class="terminal-dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="terminal-title">Python - requests</span><button class="copy-button" type="button" data-copy><i class="fa-solid fa-copy" aria-hidden="true"></i><span>Copy</span></button></div>
+                                <pre><code><span class="syn-keyword">import</span> requests
+
+base_url = <span class="syn-string">"http://PHONE_IP:8765"</span>
+api_key = <span class="syn-string">"YOUR_API_KEY"</span>
+response = requests.post(
+    <span class="syn-string">f"{base_url}/api/v1/messages"</span>,
+    headers={<span class="syn-string">"Authorization"</span>: <span class="syn-string">f"Bearer {api_key}"</span>},
+    json={<span class="syn-string">"to"</span>: <span class="syn-string">"+14155550123"</span>, <span class="syn-string">"message"</span>: <span class="syn-string">"Hello from my app"</span>},
+    timeout=<span class="syn-number">60</span>,
+)
+print(response.status_code, response.json())</code></pre>
+                            </div>
+                        </section>
+                    </div>
+                    <h2>JSON request</h2>
+                    <div class="terminal" data-language="json">
+                        <div class="terminal-bar"><span class="terminal-dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="terminal-title">application/json</span><button class="copy-button" type="button" data-copy><i class="fa-solid fa-copy" aria-hidden="true"></i><span>Copy</span></button></div>
+                        <pre><code>{
+  "to": "+14155550123",
+  "message": "Hello from my app"
+}</code></pre>
+                    </div>
+                    <h2>Bulk request</h2>
+                    <div class="terminal" data-language="json">
+                        <div class="terminal-bar"><span class="terminal-dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="terminal-title">POST /api/v1/messages/bulk</span><button class="copy-button" type="button" data-copy><i class="fa-solid fa-copy" aria-hidden="true"></i><span>Copy</span></button></div>
+                        <pre><code>{
+  "recipients": [
+    "+14155550123",
+    "+919876543210"
+  ],
+  "message": "Hello everyone"
+}</code></pre>
+                    </div>
+                    <h2>History and stats examples</h2>
+                    <p>Use <code>GET /api/v1/messages?status=failed&amp;limit=25&amp;offset=0</code> to page through failed attempts. Use <code>GET /api/v1/stats</code> for aggregate counts. Both require the bearer key.</p>
+                    <div class="page-nav"><a href="#/api-reference"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Previous: API reference</a><a href="#/architecture">Next: Architecture <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a></div>
+                </article>
+
+                <article id="architecture" data-doc-page hidden>
+                    <div class="eyebrow">ENGINEERING</div>
+                    <h1>System architecture</h1>
+                    <p class="lead">A small platform-neutral API core is hosted by the MAUI Android app, which supplies the SMS sender and a shared on-device store.</p>
+                    <div class="architecture-diagram"><pre>Browser / API client
+       | HTTP + JSON over trusted LAN :8765
+       v
+GatewayHost (Android app lifecycle, key, addresses)
+       |
+       v
+SmsApiServer (TCP listener, HTTP parser, routes, auth, CORS)
+       |                         |
+       v                         v
+SmsRequestValidator       SmsMessageStore
+       |                  SQLite: messages.db
+       v
+ISmsSender
+       |
+       v
+AndroidSmsSender -> Android SmsManager -> default SIM -> carrier</pre></div>
+                    <h2>Responsibilities</h2>
+                    <ul>
+                        <li><strong>GatewayHost:</strong> owns the API key, listener lifecycle, port, and local address discovery.</li>
+                        <li><strong>SmsApiServer:</strong> parses HTTP, authenticates, validates/routs requests, calls the sender, and writes JSON responses.</li>
+                        <li><strong>SmsRequestValidator:</strong> enforces E.164 numbers, message length, and bulk recipient limits.</li>
+                        <li><strong>ISmsSender:</strong> separates the API core from platform SMS dispatch.</li>
+                        <li><strong>AndroidSmsSender:</strong> submits single or multipart text through Android's default SMS manager.</li>
+                        <li><strong>SmsMessageStore:</strong> persists each handled attempt and serves history and stats.</li>
+                    </ul>
+                    <h2>Lifecycle</h2>
+                    <ol>
+                        <li>App startup opens <code>messages.db</code> in its private data directory and creates a random 32-byte API key.</li>
+                        <li>The user starts the gateway; the host binds a TCP listener to all network interfaces on port 8765.</li>
+                        <li>The client sends an authenticated request; the server validates it and invokes the Android sender.</li>
+                        <li>The store records accepted sends and handled send failures. The same store instance is used by mobile pages.</li>
+                        <li>Stopping the server cancels its accept loop. Closing the app stops the in-process server.</li>
+                    </ol>
+                    <p>The browser site's Node server is a separate, static-file-only process. Browser JavaScript connects directly to the phone; no SMS request passes through Node.</p>
+                    <div class="page-nav"><a href="#/api-examples"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Previous: Code examples</a><a href="#/http-server">Next: HTTP server internals <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a></div>
+                </article>
+
+                <article id="http-server" data-doc-page hidden>
+                    <div class="eyebrow">ENGINEERING</div>
+                    <h1>HTTP server internals</h1>
+                    <p class="lead">The API is a hand-built HTTP server over .NET's <code>TcpListener</code>, not ASP.NET Core or Kestrel.</p>
+                    <h2>Request processing</h2>
+                    <ol>
+                        <li>Accept one TCP client, then parse its request line, headers, and body.</li>
+                        <li>Handle CORS <code>OPTIONS</code> requests and the unauthenticated <code>GET /health</code> route.</li>
+                        <li>For API routes, validate the bearer key, content type, JSON, and route-specific input.</li>
+                        <li>Call the sender or read from SQLite, serialize the response, and close the connection.</li>
+                    </ol>
+                    <h2>Limits and behavior</h2>
+                    <div class="table-wrap"><table><thead><tr><th>Property</th><th>Implementation</th></tr></thead><tbody>
+                        <tr><td>Bind address / port</td><td><code>IPAddress.Any:8765</code>; available on phone network interfaces.</td></tr>
+                        <tr><td>Concurrency</td><td>One accepted client is handled at a time; listen backlog is 16.</td></tr>
+                        <tr><td>Request timeout</td><td>60 seconds per client request.</td></tr>
+                        <tr><td>Header/body limits</td><td>16 KiB headers; 32 KiB body.</td></tr>
+                        <tr><td>Body framing</td><td>Reads according to <code>Content-Length</code>; chunked request bodies are not implemented.</td></tr>
+                        <tr><td>Connection</td><td>One request per connection; response includes <code>Connection: close</code>.</td></tr>
+                        <tr><td>CORS</td><td>Allows any origin, GET/POST/OPTIONS, and Authorization/Content-Type headers.</td></tr>
+                        <tr><td>Transport</td><td>Plain HTTP; TLS and rate limiting are not implemented.</td></tr>
+                    </tbody></table></div>
+                    <h2>Authentication and route details</h2>
+                    <p>The API key is 32 cryptographically random bytes encoded as URL-safe Base64. It is held in memory, shown on the Server page, and regenerated at process start. The server compares equal-length key bytes using a fixed-time comparison. CORS preflight OPTIONS is handled without authentication.</p>
+                    <p>Bulk requests are fully validated before dispatch. Valid recipients are submitted sequentially, and the response contains an individual result for each number. A single handled sender failure returns HTTP 503; a processed bulk request returns HTTP 200 even if one or more result statuses are failed.</p>
+                    <div class="callout callout-warn"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i><div><strong>Do not expose this listener</strong><p>CORS is not authentication or encryption. Plain HTTP can expose the key, destinations, and message bodies to anyone able to observe the network.</p></div></div>
+                    <div class="page-nav"><a href="#/architecture"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Previous: Architecture</a><a href="#/storage">Next: SQLite and storage <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a></div>
+                </article>
+
+                <article id="storage" data-doc-page hidden>
+                    <div class="eyebrow">ENGINEERING</div>
+                    <h1>SQLite and storage</h1>
+                    <p class="lead">Message history lives on the phone in the app's private data directory. The API and mobile pages read the same database.</p>
+                    <p>Database path: <code>FileSystem.AppDataDirectory/messages.db</code>.</p>
+                    <h2>messages table</h2>
+                    <div class="table-wrap"><table><thead><tr><th>Column</th><th>Meaning</th></tr></thead><tbody>
+                        <tr><td><code>id</code></td><td>Auto-incrementing record ID.</td></tr>
+                        <tr><td><code>batch_id</code></td><td>Nullable ID shared by records in a bulk batch; null for single messages.</td></tr>
+                        <tr><td><code>destination</code></td><td>Validated E.164 destination.</td></tr>
+                        <tr><td><code>message</code></td><td>Message text.</td></tr>
+                        <tr><td><code>status</code></td><td>Constrained to <code>success</code> or <code>failed</code>.</td></tr>
+                        <tr><td><code>error</code></td><td>Nullable failure reason.</td></tr>
+                        <tr><td><code>created_at</code></td><td>ISO 8601 UTC timestamp.</td></tr>
+                    </tbody></table></div>
+                    <h2>Writes and reads</h2>
+                    <ul>
+                        <li>Each handled send attempt is inserted after Android accepts it or reports a handled send failure.</li>
+                        <li>Invalid input rejected before sending is not stored.</li>
+                        <li>Indexes support status and newest-first lookups; a lock serializes access to the shared SQLite connection.</li>
+                        <li>Stats are calculated from stored rows; history supports status filtering, limit, and offset.</li>
+                        <li>There is no automatic retention/pruning job. Uninstalling the app removes its private data.</li>
+                    </ul>
+                    <p>Neither the website nor its Node static server maintains another message database.</p>
+                    <div class="page-nav"><a href="#/http-server"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Previous: HTTP server internals</a><a href="#/troubleshooting">Next: Troubleshooting <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a></div>
+                </article>
+
+                <article id="troubleshooting" data-doc-page hidden>
+                    <div class="eyebrow">OPERATIONS</div>
+                    <h1>Troubleshooting</h1>
+                    <p class="lead">Use the request status and gateway state to narrow down connection, validation, and SMS issues.</p>
+                    <div class="table-wrap"><table><thead><tr><th>Symptom / status</th><th>Checks</th></tr></thead><tbody>
+                        <tr><td>Browser cannot connect</td><td>Start the server; use the phone's Same Wi-Fi address, not another device's localhost; check Wi-Fi, firewall, and client isolation.</td></tr>
+                        <tr><td>HTTP 400</td><td>Check JSON syntax, E.164 formatting, nonblank message, 1,600-character limit, unique bulk numbers, and history query ranges.</td></tr>
+                        <tr><td>HTTP 401</td><td>Copy the key currently displayed by the app and send it as a Bearer token. The key changes after restart.</td></tr>
+                        <tr><td>HTTP 404</td><td>Check the method and exact endpoint path.</td></tr>
+                        <tr><td>HTTP 413 / 431</td><td>Reduce the request body below 32 KiB or request headers below 16 KiB.</td></tr>
+                        <tr><td>HTTP 415</td><td>Set <code>Content-Type: application/json</code> on POST requests.</td></tr>
+                        <tr><td>HTTP 503 (single)</td><td>Check SMS permission, default SIM, signal, SIM capability, and carrier account status.</td></tr>
+                        <tr><td>Bulk HTTP 200 with failures</td><td>Check each result's status and error. The batch continues after an individual send failure.</td></tr>
+                        <tr><td>HTTPS page cannot call phone API</td><td>Browsers may block HTTPS-to-HTTP requests as mixed content. The phone API has no TLS endpoint.</td></tr>
+                    </tbody></table></div>
+                    <h2>Check service state</h2>
+                    <ol>
+                        <li>Confirm the Android Server page says Running.</li>
+                        <li>From a reachable client, request <code>GET http://PHONE_IP:8765/health</code>.</li>
+                        <li>Reconnect with the current API key if the app was restarted.</li>
+                        <li>Use Message History or <code>GET /api/v1/messages</code> to inspect recorded send errors.</li>
+                    </ol>
+                    <div class="page-nav"><a href="#/storage"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Previous: SQLite and storage</a><a href="#/security">Next: Security and privacy <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a></div>
+                </article>
+
+                <article id="security" data-doc-page hidden>
+                    <div class="eyebrow">OPERATIONS</div>
+                    <h1>Security and privacy</h1>
+                    <p class="lead">The gateway is intended for trusted local networks. It is not a hardened public SMS service.</p>
+                    <h2>Network and API key</h2>
+                    <ul>
+                        <li>The phone listens on all network interfaces at port 8765 using plain HTTP. There is no TLS encryption.</li>
+                        <li>The bearer key authenticates API routes but cannot protect data from network interception without TLS.</li>
+                        <li>CORS allows any origin to support browser clients; it is not an access-control boundary.</li>
+                        <li>Do not port-forward the phone, expose the port publicly, or use an untrusted Wi-Fi network.</li>
+                        <li>Do not put the key in public source code or share browser sessions. The browser keeps it in session storage for the current tab.</li>
+                    </ul>
+                    <h2>Message data</h2>
+                    <ul>
+                        <li>Destinations, message text, status, timestamp, and error details are stored in the app's private SQLite database.</li>
+                        <li>The browser dashboard reads history from the phone; it does not persist a second copy of the message database.</li>
+                        <li>The About/Developer pages may request public profile/project data from GitHub. SMS bodies and phone numbers are not sent to GitHub by the app.</li>
+                        <li>Uninstalling the Android app removes its private database. The current app does not automatically prune history.</li>
+                    </ul>
+                    <h2>Responsible sending</h2>
+                    <p>Only send to recipients who have agreed to receive messages. Messages use the phone's default SIM and carrier plan; charges and carrier restrictions may apply.</p>
+                    <div class="page-nav"><a href="#/troubleshooting"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Previous: Troubleshooting</a><a href="#/development">Next: Development and testing <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a></div>
+                </article>
+
+                <article id="development" data-doc-page hidden>
+                    <div class="eyebrow">ENGINEERING</div>
+                    <h1>Development and testing</h1>
+                    <p class="lead">The API core is platform-neutral; Android SMS dispatch is supplied through the <code>ISmsSender</code> interface.</p>
+                    <h2>Source map</h2>
+                    <div class="table-wrap"><table><thead><tr><th>Source</th><th>Responsibility</th></tr></thead><tbody>
+                        <tr><td><code>SimSmsGateway/GatewayHost.cs</code></td><td>API key, port, listener lifecycle, and local addresses.</td></tr>
+                        <tr><td><code>SimSmsGateway.Core/SmsApiServer.cs</code></td><td>HTTP parsing, authentication, routes, CORS, sending, and responses.</td></tr>
+                        <tr><td><code>SimSmsGateway.Core/SmsRequestValidator.cs</code></td><td>E.164, message length, and bulk validation.</td></tr>
+                        <tr><td><code>SimSmsGateway.Core/SmsMessageStore.cs</code></td><td>SQLite schema, message history, and aggregate stats.</td></tr>
+                        <tr><td><code>SimSmsGateway/Platforms/Android/AndroidSmsSender.cs</code></td><td>Android SmsManager adapter.</td></tr>
+                        <tr><td><code>web/app.js</code>, <code>web/server.js</code></td><td>Browser client and static-file server; the client calls the phone directly.</td></tr>
+                        <tr><td><code>web/openapi.json</code></td><td>Machine-readable API contract.</td></tr>
+                    </tbody></table></div>
+                    <h2>Build and test</h2>
+                    <div class="terminal" data-language="powershell">
+                        <div class="terminal-bar"><span class="terminal-dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="terminal-title">PowerShell - build and offline tests</span><button class="copy-button" type="button" data-copy><i class="fa-solid fa-copy" aria-hidden="true"></i><span>Copy</span></button></div>
+                        <pre><code>dotnet build .\build\sim-sms-gateway\SimSmsGateway.sln
+dotnet run --project .\build\sim-sms-gateway\SimSmsGateway.Tests\SimSmsGateway.Tests.csproj</code></pre>
+                    </div>
+                    <p>The offline API tests use a fake sender and never send a real SMS. To exercise Android dispatch, install the app on an authorized device with an SMS-capable SIM and grant permission.</p>
+                    <h2>Extending the sender</h2>
+                    <p>Implement <code>ISmsSender</code> for a new platform or fake, then supply it when constructing <code>SmsApiServer</code>. Keep request validation and persistence in the core so API behavior remains consistent across sender implementations.</p>
+                    <div class="page-nav"><a href="#/security"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Previous: Security and privacy</a><a href="#/overview">Back to overview <i class="fa-solid fa-arrow-up" aria-hidden="true"></i></a></div>
+                </article>
+            </main>
+            <footer class="docs-footer">
+                <span>Sim SMS Gateway Documentation</span>
+                <a href="https://github.com/kjagdeesh/Sim-SMS-Gateway" target="_blank" rel="noopener noreferrer">Source on GitHub</a>
+            </footer>
+        </div>
+    </div>
+    <div id="docs-toast" class="docs-toast" role="status" aria-live="polite" hidden></div>
+</body>
+
+</html>

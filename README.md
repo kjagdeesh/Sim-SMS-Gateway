@@ -6,6 +6,7 @@ Sim SMS Gateway is a self-hosted Android SMS gateway. The Android app exposes a 
 
 - [App and functionality guide](APP_GUIDE.md) — navigation, setup, sending, history, and troubleshooting.
 - [Technical guide](TECHNICAL_GUIDE.md) — server architecture, API flow, SQLite persistence, and source map.
+- [Standalone documentation website](web/docs/index.html) — complete, searchable product and technical documentation.
 
 ## Requirements
 
@@ -35,6 +36,7 @@ npm start
 ```
 
 Open `http://localhost:8766`. Enter the server URL and API key from the Android app. If the browser is on a different device, use the phone's Wi-Fi address rather than `localhost`; both devices must be on the same trusted network.
+The standalone documentation website is available at `http://localhost:8766/docs/`.
 
 You can also open `web/index.html` with VS Code Live Server. Its CSS, JavaScript, and favicon use paths relative to the playground folder.
 
