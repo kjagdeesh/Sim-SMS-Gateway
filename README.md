@@ -27,6 +27,18 @@ Send SMS through your Android phone's SIM with a local REST API, SQLite history,
 </p>
 <p align="center"><em>Standalone documentation website</em></p>
 
+## Android app screenshots
+
+<table>
+  <tr>
+    <td align="center"><img src="web/screenshots/mobile-home.jpg" alt="Sim SMS Gateway Android home screen" width="145"><br><strong>Home</strong></td>
+    <td align="center"><img src="web/screenshots/mobile-dashboard.jpg" alt="Android dashboard showing message totals and app shortcuts" width="145"><br><strong>Dashboard</strong></td>
+    <td align="center"><img src="web/screenshots/mobile-server.jpg" alt="Android server screen showing gateway status and connection URLs" width="145"><br><strong>Server</strong></td>
+    <td align="center"><img src="web/screenshots/mobile-settings.jpg" alt="Android settings screen with appearance, gateway, and privacy options" width="145"><br><strong>Settings</strong></td>
+    <td align="center"><img src="web/screenshots/mobile-about.jpg" alt="Android About App screen showing project information" width="145"><br><strong>About</strong></td>
+  </tr>
+</table>
+
 ## Documentation
 
 - [Complete documentation website](web/docs/index.html) — searchable setup, app, browser dashboard, sending, history, API, architecture, SQLite, and troubleshooting guides.
