@@ -1,12 +1,39 @@
-# Sim SMS Gateway
+<p align="center">
+  <img src="web/logo.svg" alt="Sim SMS Gateway app logo" width="104">
+</p>
 
-Sim SMS Gateway is a self-hosted Android SMS gateway. The Android app exposes a small local HTTP API and submits SMS messages through the phone's default SIM using Android's `SmsManager`. It does not use a cloud SMS service.
+<h1 align="center">Sim SMS Gateway</h1>
+<p align="center"><strong>Your SIM. Your SMS API.</strong><br>
+Send SMS through your Android phone's SIM with a local REST API, SQLite history, and a responsive web dashboard—without a cloud SMS provider.</p>
 
-## Guides
+## Highlights
 
-- [App and functionality guide](APP_GUIDE.md) — navigation, setup, sending, history, and troubleshooting.
-- [Technical guide](TECHNICAL_GUIDE.md) — server architecture, API flow, SQLite persistence, and source map.
-- [Standalone documentation website](web/docs/index.html) — complete, searchable product and technical documentation.
+- **Use your own SIM:** Send through the Android phone's default SMS subscription and carrier plan.
+- **Send one or many:** Submit single messages or bulk requests for up to 100 unique recipients.
+- **See each outcome:** Review success and failure status for every attempted message, including individual bulk results.
+- **Keep history on-device:** Message records and statistics are stored in the app's private SQLite database.
+- **Manage from the browser:** Use the responsive website to send messages, browse history, connect to the phone, and explore the API.
+- **Integrate with your stack:** Use the REST API, OpenAPI contract, and cURL, JavaScript, or Python examples.
+
+## Website preview
+
+<p align="center">
+  <img src="web/screenshots/website-home-desktop.png" alt="Sim SMS Gateway website home screen showing the navigation, gateway overview, and feature cards" width="100%">
+</p>
+<p align="center"><em>Browser dashboard home screen</em></p>
+
+<p align="center">
+  <img src="web/screenshots/documentation.png" alt="Sim SMS Gateway documentation website with searchable navigation and product guides" width="100%">
+</p>
+<p align="center"><em>Standalone documentation website</em></p>
+
+## Documentation
+
+- [Complete documentation website](web/docs/index.html) — searchable setup, app, browser dashboard, sending, history, API, architecture, SQLite, and troubleshooting guides.
+- [App and functionality guide](APP_GUIDE.md) — end-to-end navigation, setup, sending, history, and troubleshooting.
+- [Technical guide](TECHNICAL_GUIDE.md) — server architecture, API request flow, SQLite persistence, and source map.
+- [OpenAPI specification](web/openapi.json) — machine-readable API contract.
+- [Browser playground](web/index.html) — the dashboard, message forms, history, and interactive API reference.
 
 ## Requirements
 
@@ -35,10 +62,10 @@ From `build/sim-sms-gateway/web/`:
 npm start
 ```
 
-Open `http://localhost:8766`. Enter the server URL and API key from the Android app. If the browser is on a different device, use the phone's Wi-Fi address rather than `localhost`; both devices must be on the same trusted network.
-The standalone documentation website is available at `http://localhost:8766/docs/`.
+Open [http://localhost:8766](http://localhost:8766). Enter the server URL and API key from the Android app. If the browser is on a different device, use the phone's Wi-Fi address rather than `localhost`; both devices must be on the same trusted network.
+The standalone documentation website is available at [http://localhost:8766/docs/](http://localhost:8766/docs/).
 
-You can also open `web/index.html` with VS Code Live Server. Its CSS, JavaScript, and favicon use paths relative to the playground folder.
+You can also open [`web/index.html`](web/index.html) with VS Code Live Server. Its CSS, JavaScript, and favicon use paths relative to the playground folder.
 
 ## API
 
@@ -61,7 +88,7 @@ The destination must be an E.164 number. A `202 Accepted` response means Android
 
 `GET /api/v1/messages?status=&limit=&offset=` returns the stored history, and `GET /api/v1/stats` returns total/success/failed counts. Every attempted send is stored in a SQLite file (`messages.db`) in the app's private storage.
 
-The website has a side menu with Home, Dashboard (history and totals), Send Messages (single and bulk), API Documentation (per-endpoint docs, code examples and live try-it), and Developer & Project. The native Android app uses a bottom tab bar (Dashboard, Home, Developer) with matching light/dark themes and Font Awesome icons. An OpenAPI spec is at `web/openapi.json`.
+The website has a side menu with Home, Dashboard (history and totals), Send Messages (single and bulk), API Documentation (per-endpoint docs, code examples and live try-it), and Developer & Project. The native Android app uses a bottom tab bar (Dashboard, Home, Developer) with matching light/dark themes and Font Awesome icons. See the [OpenAPI specification](web/openapi.json) for the API contract.
 
 ## Safety and limitations
 
