@@ -72,7 +72,19 @@ dotnet build .\build\sim-sms-gateway\SimSmsGateway\SimSmsGateway.csproj -t:Insta
 
 Open `build/sim-sms-gateway/SimSmsGateway.sln` in Visual Studio to work with the Android app, shared core library, and offline test harness together.
 
-Open Sim SMS Gateway on the phone. A bottom navigation bar provides **Dashboard**, **Home** (default) and **Developer & Project**. The Dashboard shows message totals and card shortcuts to **Server**, **Message history**, **API documentation**, **Settings** (System/Light/Dark theme) and **About app** (project description fetched live from GitHub). On the Server page, tap **Start server** and grant SMS permission when prompted. Keep the app open while using the gateway. The page shows localhost and available Wi-Fi addresses, plus a generated API key. Message history and totals come from the same on-device SQLite database used by the API.
+Open Sim SMS Gateway on the phone. A bottom navigation bar provides **Dashboard**, **Home** (default) and **Developer & Project**. The Dashboard shows message totals and card shortcuts to **Server**, **Message history**, **API documentation**, **Settings** (System/Light/Dark theme) and **About app** (project description fetched live from GitHub). On the Server page, tap **Start server** and grant SMS permission when prompted. If Android blocks permission for the sideloaded APK, follow the warning below. Keep the app open while using the gateway. The page shows localhost and available Wi-Fi addresses, plus a generated API key. Message history and totals come from the same on-device SQLite database used by the API.
+
+> [!WARNING]
+> **SMS permission for a sideloaded APK (Android 13 and later):** Android may block this permission until you allow restricted settings for the app. Only do this for an APK you trust.
+>
+> 1. In Sim SMS Gateway, tap **Start server** to trigger the permission request. If Android shows a restricted-setting warning, dismiss it.
+> 2. Open **Settings → Apps → Sim SMS Gateway**. You can also long-press the app icon and tap **App info**.
+> 3. Open the **⋮** menu, choose **Allow restricted settings**, and confirm with your device PIN or password.
+> 4. Return to the app, tap **Start server** again, and allow the SMS permission when Android asks.
+>
+> Menu names and locations vary by Android version and phone manufacturer. The **Allow restricted settings** option may appear only after the app first requests the permission.
+>
+> See [Google's Android Help instructions](https://support.google.com/android/answer/12623953?hl=en#allowrestrictedsettings) for the official steps and menu visuals.
 
 ## Build and publish a signed APK
 
